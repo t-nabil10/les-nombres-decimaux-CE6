@@ -8,53 +8,53 @@
     <style>
         body {
             font-family: 'Amiri', serif;
-            line-height: 1.4;
+            line-height: 1.5;
             margin: 0;
-            padding: 8px;
+            padding: 10px;
             background-color: #f5f5f5;
             direction: rtl;
-            font-size: 12px;
+            font-size: 14px;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
             background-color: white;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
         }
         header {
             text-align: center;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #4CAF50;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #4CAF50;
         }
         .bilingual-title {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
         }
         .arabic-title {
             color: #2c3e50;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 700;
         }
         .french-title {
             color: #666;
-            font-size: 13px;
+            font-size: 16px;
             font-style: italic;
             font-family: 'Arial', sans-serif;
         }
         .section {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .definition-box, .property-box, .example-box {
-            padding: 12px;
+            padding: 16px;
             border-radius: 6px;
             border-right: 3px solid;
-            margin: 10px 0;
+            margin: 12px 0;
         }
         .definition-box {
             background-color: #f0f8ff;
@@ -69,86 +69,93 @@
             border-color: #ff9800;
         }
         ul {
-            padding-right: 15px;
-            margin: 10px 0;
+            padding-right: 20px;
+            margin: 12px 0;
         }
         li {
-            margin-bottom: 6px;
-            font-size: 12px;
-            line-height: 1.4;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.5;
         }
         .section-title {
             color: #2c3e50;
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
             font-weight: 700;
         }
         .math-example {
             text-align: center;
-            margin: 10px 0;
-            padding: 10px;
+            margin: 12px 0;
+            padding: 12px;
             background-color: #f9f9f9;
             border-radius: 6px;
             font-family: 'Times New Roman', serif;
             direction: ltr;
         }
         .math-expression {
-            font-size: 13px;
+            font-size: 16px;
             font-weight: bold;
-            margin: 8px 0;
+            margin: 10px 0;
             font-family: 'Times New Roman', serif;
         }
         .answer-btn {
             background-color: #2196F3;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            margin: 5px 3px;
-            font-size: 11px;
+            margin: 6px 4px;
+            font-size: 13px;
             font-family: 'Arial', sans-serif;
+            transition: background-color 0.3s;
+        }
+        .answer-btn:hover {
+            background-color: #1976D2;
         }
         .solution {
             background-color: #e8f5e9;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
-            margin-top: 8px;
+            margin-top: 10px;
             display: none;
-            font-size: 11px;
-            line-height: 1.3;
+            font-size: 13px;
+            line-height: 1.4;
         }
         .solution.show {
             display: block;
         }
         .calculation-steps {
-            margin: 5px 0;
-            padding: 6px;
+            margin: 8px 0;
+            padding: 8px;
             background-color: #f1f8e9;
             border-radius: 4px;
             font-family: 'Times New Roman', serif;
-            font-size: 10px;
+            font-size: 12px;
         }
         .example-group {
-            margin: 12px 0;
-            padding: 8px;
+            margin: 15px 0;
+            padding: 10px;
             border: 1px dashed #ccc;
             border-radius: 6px;
         }
         .example-title {
             color: #e65100;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
         }
         .decimal-highlight {
             color: #d32f2f;
             font-weight: bold;
         }
         h3 {
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        strong {
             color: #2c3e50;
         }
     </style>
@@ -181,15 +188,17 @@
                 <h3 class="section-title">ج) أمثلة:</h3>
                 <div class="example-box">
                     <div class="example-group">
-                        <div class="example-title">المثال : خاصية التبديل في الأعداد العشرية</div>
+                        <div class="example-title">المثال 1: خاصية التبديل في الأعداد العشرية</div>
                         <div class="math-example">
                             <div class="math-expression"><span class="decimal-highlight">3,25</span> × <span class="decimal-highlight">4,2</span> = <span class="decimal-highlight">4,2</span> × <span class="decimal-highlight">3,25</span></div>
                             <button class="answer-btn" onclick="toggleSolution('solution1')">عرض الحل</button>
                             <div id="solution1" class="solution">
                                 <div class="calculation-steps">
+                                    <p>الحل:</p>
                                     <p>3,25 × 4,2 = 13,65</p>
                                     <p>4,2 × 3,25 = 13,65</p>
-                                    <p><strong>الاستنتاج:</strong> الجداء لا يتغير عند تبديل أماكن العوامل</p>
+                                    <p>النتيجة: 13,65 = 13,65</p>
+                                    <p><strong>الاستنتاج:</strong> الجداء لا يتغير عند تبديل أماكن العوامل حتى مع الأعداد العشرية</p>
                                 </div>
                             </div>
                         </div>
@@ -202,8 +211,10 @@
                             <button class="answer-btn" onclick="toggleSolution('solution2')">عرض الحل</button>
                             <div id="solution2" class="solution">
                                 <div class="calculation-steps">
+                                    <p>الحل:</p>
                                     <p>7,5 × 8 = 60,0</p>
-                                    <p><strong>النتيجة:</strong> 60</p>
+                                    <p>أو: 7,5 + 7,5 + 7,5 + 7,5 + 7,5 + 7,5 + 7,5 + 7,5 = 60,0</p>
+                                    <p><strong>النتيجة النهائية:</strong> 60</p>
                                 </div>
                             </div>
                         </div>
@@ -216,26 +227,33 @@
                             <button class="answer-btn" onclick="toggleSolution('solution3')">عرض الحل</button>
                             <div id="solution3" class="solution">
                                 <div class="calculation-steps">
+                                    <p>الحل المفصل:</p>
+                                    <p>الخطوة 1: تجاهل الفواصل مؤقتاً</p>
                                     <p>23 × 15 = 345</p>
+                                    <p>الخطوة 2: عد الأرقام بعد الفواصل في العوامل</p>
                                     <p>2,3 ← رقم واحد بعد الفاصلة</p>
                                     <p>1,5 ← رقم واحد بعد الفاصلة</p>
                                     <p>المجموع: رقمين بعد الفاصلة</p>
-                                    <p><strong>النتيجة:</strong> 3,45</p>
+                                    <p>الخطوة 3: وضع الفاصلة في النتيجة</p>
+                                    <p>345 ← 3,45</p>
+                                    <p><strong>النتيجة النهائية:</strong> 3,45</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="example-group">
-                        <div class="example-title">المثال 4: خاصية التجميع</div>
+                        <div class="example-title">المثال 4: خاصية التجميع مع الأعداد العشرية</div>
                         <div class="math-example">
                             <div class="math-expression">(<span class="decimal-highlight">1,2</span> × <span class="decimal-highlight">2,5</span>) × 4 = <span class="decimal-highlight">1,2</span> × (<span class="decimal-highlight">2,5</span> × 4)</div>
                             <button class="answer-btn" onclick="toggleSolution('solution4')">عرض الحل</button>
                             <div id="solution4" class="solution">
                                 <div class="calculation-steps">
+                                    <p>الحل:</p>
                                     <p>(1,2 × 2,5) × 4 = 3,0 × 4 = 12,0</p>
                                     <p>1,2 × (2,5 × 4) = 1,2 × 10,0 = 12,0</p>
-                                    <p><strong>الاستنتاج:</strong> الجداء لا يتغير عند تغيير تجميع العوامل</p>
+                                    <p>النتيجة: 12,0 = 12,0</p>
+                                    <p><strong>الاستنتاج:</strong> الجداء لا يتغير عند تغيير تجميع العوامل مع الأعداد العشرية</p>
                                 </div>
                             </div>
                         </div>
@@ -248,23 +266,28 @@
                             <button class="answer-btn" onclick="toggleSolution('solution5')">عرض الحل</button>
                             <div id="solution5" class="solution">
                                 <div class="calculation-steps">
-                                    <p>(0,5 × 2,4) × 1,25 = 1,2 × 1,25 = 1,5</p>
-                                    <p><strong>النتيجة:</strong> 1,5</p>
+                                    <p>الحل بعدة طرق:</p>
+                                    <p>الطريقة 1: (0,5 × 2,4) × 1,25 = 1,2 × 1,25 = 1,5</p>
+                                    <p>الطريقة 2: 0,5 × (2,4 × 1,25) = 0,5 × 3,0 = 1,5</p>
+                                    <p>الطريقة 3: 2,4 × (0,5 × 1,25) = 2,4 × 0,625 = 1,5</p>
+                                    <p><strong>النتيجة النهائية:</strong> 1,5</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="example-group">
-                        <div class="example-title">المثال 6: خاصية التوزيع</div>
+                        <div class="example-title">المثال 6: خاصية التوزيع مع الأعداد العشرية</div>
                         <div class="math-example">
                             <div class="math-expression"><span class="decimal-highlight">3,2</span> × (<span class="decimal-highlight">4,5</span> + <span class="decimal-highlight">1,5</span>) = (<span class="decimal-highlight">3,2</span> × <span class="decimal-highlight">4,5</span>) + (<span class="decimal-highlight">3,2</span> × <span class="decimal-highlight">1,5</span>)</div>
                             <button class="answer-btn" onclick="toggleSolution('solution6')">عرض الحل</button>
                             <div id="solution6" class="solution">
                                 <div class="calculation-steps">
+                                    <p>الحل:</p>
                                     <p>3,2 × (4,5 + 1,5) = 3,2 × 6,0 = 19,2</p>
                                     <p>(3,2 × 4,5) + (3,2 × 1,5) = 14,4 + 4,8 = 19,2</p>
-                                    <p><strong>الاستنتاج:</strong> الضرب توزيعي على الجمع</p>
+                                    <p>النتيجة: 19,2 = 19,2</p>
+                                    <p><strong>الاستنتاج:</strong> الضرب توزيعي على الجمع مع الأعداد العشرية</p>
                                 </div>
                             </div>
                         </div>
@@ -289,4 +312,4 @@
         }
     </script>
 </body>
-</html>
+                                        </html>
