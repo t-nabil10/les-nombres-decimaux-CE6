@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Factures</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .app-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            margin-bottom: 15px;
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .items-table th, .items-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .items-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #0b7dda;
+        }
+        
+        .invoice-preview {
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: white;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .invoice-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .invoice-footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .invoice-preview, .invoice-preview * {
+                visibility: visible;
+            }
+            .invoice-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="app-title">Générateur de Factures</h1>
+        
+        <div class="app-container">
+            <div class="form-section">
+                <h2>Informations de la Facture</h2>
+                
+                <div class="form-group">
+                    <label for="companyName">Nom de l'Entreprise</label>
+                    <input type="text" id="companyName" value="SOLUTION FOREVER">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyAddress">Adresse de l'Entreprise</label>
+                    <input type="text" id="companyAddress" value="SIDI ALLAL EL BAHRAOUI">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyICE">ICE</label>
+                    <input type="text" id="companyICE" value="002919501000038">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceNumber">N° Facture</label>
+                    <input type="text" id="invoiceNumber" value="#F25-832">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceDate">Date de Facture</label>
+                    <input type="date" id="invoiceDate" value="2025-10-23">
+                </div>
+                
+                <h2>Articles</h2>
+                
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Prix Unitaire</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <!-- Les lignes d'articles seront ajoutées ici dynamiquement -->
+                    </tbody>
+                </table>
+                
+                <button id="addItemBtn" class="btn btn-primary" style="margin-top: 10px;">Ajouter un Article</button>
+                
+                <div class="form-group">
+                    <label for="totalInWords">Montant Total en Lettres</label>
+                    <input type="text" id="totalInWords" value="deux mille huit cent quatre-vingt six DHS OCts">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyDetails">Détails de l'Entreprise (Bas de page)</label>
+                    <textarea id="companyDetails" rows="3">SOLUTION FOREVER SARL-12 Rue SABRI BOUIEMAA 1er ETC N 6, Casablanca. Gsm: +212 665648572 RC: 597257 Patente: 32401743 IF: 53991669 ICE: 00337268200022</textarea>
+                </div>
+                
+                <div class="actions">
+                    <button id="generateBtn" class="btn btn-primary">Générer la Facture</button>
+                    <button id="printBtn" class="btn btn-secondary">Imprimer la Facture</button>
+                    <button id="resetBtn" class="btn btn-danger">Réinitialiser</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2>Aperçu de la Facture</h2>
+                <div class="invoice-preview" id="invoicePreview">
+                    <!-- L'aperçu de la facture sera généré ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données initiales pour les articles
+        const initialItems = [
+            { reference: "P46", designation: "SIROP BLUE CURACAO TOSCHI 1L", quantity: 2, unitPrice: 130.00 },
+            { reference: "-", designation: "BUBBLE TEA MANGUE", quantity: 2, unitPrice: 357.50 },
+            { reference: "-", designation: "BUBBLE TEA FRAISE", quantity: 2, unitPrice: 357.50 },
+            { reference: "-", designation: "BUBBLE TEA BLUEBERRY", quantity: 2, unitPrice: 357.50 }
+        ];
+
+        // Fonction pour formater un nombre en devise
+        function formatCurrency(amount) {
+            return parseFloat(amount).toFixed(2);
+        }
+
+        // Fonction pour calculer le montant HT d'un article
+        function calculateItemTotal(quantity, unitPrice) {
+            return quantity * unitPrice;
+        }
+
+        // Fonction pour calculer le total de la facture
+        function calculateInvoiceTotal() {
+            let total = 0;
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.item-unitPrice').value) || 0;
+                total += calculateItemTotal(quantity, unitPrice);
+            });
+            
+            return total;
+        }
+
+        // Fonction pour ajouter une ligne d'article
+        function addItemRow(item = { reference: "", designation: "", quantity: 1, unitPrice: 0 }) {
+            const tableBody = document.getElementById('itemsTableBody');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td><input type="text" class="item-reference" value="${item.reference}"></td>
+                <td><input type="text" class="item-designation" value="${item.designation}"></td>
+                <td><input type="number" class="item-quantity" min="1" value="${item.quantity}"></td>
+                <td><input type="number" class="item-unitPrice" min="0" step="0.01" value="${item.unitPrice}"></td>
+                <td><button class="btn btn-danger remove-item">Supprimer</button></td>
+            `;
+            
+            tableBody.appendChild(row);
+            
+            // Ajouter un écouteur d'événement pour le bouton de suppression
+            row.querySelector('.remove-item').addEventListener('click', function() {
+                row.remove();
+                generateInvoicePreview();
+            });
+            
+            // Ajouter des écouteurs d'événements pour les champs de saisie
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+        }
+
+        // Fonction pour générer l'aperçu de la facture
+        function generateInvoicePreview() {
+            const invoicePreview = document.getElementById('invoicePreview');
+            const companyName = document.getElementById('companyName').value;
+            const companyAddress = document.getElementById('companyAddress').value;
+            const companyICE = document.getElementById('companyICE').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const invoiceDate = document.getElementById('invoiceDate').value;
+            const totalInWords = document.getElementById('totalInWords').value;
+            const companyDetails = document.getElementById('companyDetails').value;
+            
+            // Formater la date
+            const dateObj = new Date(invoiceDate);
+            const formattedDate = dateObj.toLocaleDateString('fr-FR');
+            
+            // Récupérer les articles
+            const items = [];
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            
+            rows.forEach(row => {
+                const reference = row.querySelector('.item-reference').value;
+                const designation = row.querySelector('.item-designation').value;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.item-unitPrice').value) || 0;
+                const total = calculateItemTotal(quantity, unitPrice);
+                
+                items.push({
+                    reference,
+                    designation,
+                    quantity,
+                    unitPrice,
+                    total
+                });
+            });
+            
+            // Calculer le total de la facture
+            const invoiceTotal = calculateInvoiceTotal();
+            
+            // Générer le HTML de l'aperçu
+            let previewHTML = `
+                <div class="invoice-header">
+                    <h1># FACTURE</h1>
+                    <h2>${companyName}</h2>
+                    <p>${companyAddress}</p>
+                    <p>ICE: ${companyICE}</p>
+                </div>
+                
+                <div class="invoice-details">
+                    <div>
+                        <p><strong>N° Facture</strong></p>
+                        <p>${invoiceNumber}</p>
+                    </div>
+                    <div>
+                        <p><strong>Date De Facture</strong></p>
+                        <p>${formattedDate}</p>
+                    </div>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Px Unitaire</th>
+                            <th>Montant HT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Ajouter les lignes d'articles
+            items.forEach(item => {
+                previewHTML += `
+                    <tr>
+                        <td>${item.reference}</td>
+                        <td>${item.designation}</td>
+                        <td>${item.quantity}</td>
+                        <td>${formatCurrency(item.unitPrice)}</td>
+                        <td>${formatCurrency(item.total)}</td>
+                    </tr>
+                `;
+            });
+            
+            previewHTML += `
+                    </tbody>
+                </table>
+                
+                <div class="invoice-footer">
+                    <p><strong>Arrêtée la présente facture à la somme de:</strong></p>
+                    <p>${totalInWords}</p>
+                    <p style="margin-top: 30px;">Cachet et Signature:</p>
+                    <div style="margin-top: 50px; text-align: center;">
+                        <p><strong>VISIBLE - ITALIA</strong></p>
+                        <p><strong>TOSCHI</strong></p>
+                        <p><strong>— 1945 —</strong></p>
+                    </div>
+                    <div style="margin-top: 50px; font-size: 12px;">
+                        <p>${companyDetails}</p>
+                    </div>
+                </div>
+            `;
+            
+            invoicePreview.innerHTML = previewHTML;
+        }
+
+        // Fonction pour initialiser l'application
+        function initApp() {
+            // Ajouter les articles initiaux
+            initialItems.forEach(item => addItemRow(item));
+            
+            // Générer l'aperçu initial
+            generateInvoicePreview();
+            
+            // Ajouter des écouteurs d'événements
+            document.getElementById('addItemBtn').addEventListener('click', function() {
+                addItemRow();
+                generateInvoicePreview();
+            });
+            
+            document.getElementById('generateBtn').addEventListener('click', generateInvoicePreview);
+            
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                if (confirm("Êtes-vous sûr de vouloir réinitialiser la facture ?")) {
+                    document.getElementById('itemsTableBody').innerHTML = '';
+                    initialItems.forEach(item => addItemRow(item));
+                    generateInvoicePreview();
+                }
+            });
+            
+            // Ajouter des écouteurs d'événements pour les champs de formulaire
+            const formInputs = document.querySelectorAll('.form-section input, .form-section textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+        }
+
+        // Initialiser l'application lorsque la page est chargée
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
