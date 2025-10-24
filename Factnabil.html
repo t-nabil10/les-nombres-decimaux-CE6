@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Factures avec Logo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .app-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 400px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 400px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .database-section {
+            width: 100%;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        
+        .tax-settings {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .tax-settings h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .items-table th, .items-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .items-table th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .items-table input, .items-table select {
+            border: none;
+            padding: 5px;
+            width: 100%;
+            background: transparent;
+        }
+        
+        .items-table input:focus, .items-table select:focus {
+            background-color: #f0f8ff;
+            border: 1px solid #3498db;
+        }
+        
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .invoice-preview {
+            border: 1px solid #ddd;
+            padding: 30px;
+            background-color: white;
+            font-family: 'Arial', sans-serif;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            min-height: 800px;
+        }
+        
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .invoice-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .invoice-totals {
+            width: 300px;
+            margin-left: auto;
+            margin-top: 20px;
+        }
+        
+        .invoice-totals table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .invoice-totals td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-totals .total-row {
+            font-weight: bold;
+            border-top: 2px solid #3498db;
+            background-color: #f8f9fa;
+        }
+        
+        .invoice-footer {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .total-in-words {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-style: italic;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .database-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .database-table th, .database-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .database-table th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .database-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .database-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .database-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .invoice-preview, .invoice-preview * {
+                visibility: visible;
+            }
+            .invoice-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                padding: 20px;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        
+        .logo-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed #ddd;
+        }
+        
+        .logo-preview {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .logo-preview img {
+            max-width: 200px;
+            max-height: 120px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background: white;
+        }
+        
+        .logo-placeholder {
+            display: inline-block;
+            width: 200px;
+            height: 120px;
+            background-color: #f0f0f0;
+            border: 1px dashed #ccc;
+            line-height: 120px;
+            color: #999;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .logo-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .auto-fill-notice {
+            background-color: #e8f4fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .logo-size-info {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="app-title">Générateur de Factures avec Logo Personnalisé</h1>
+        
+        <div class="app-container">
+            <div class="form-section">
+                <h2>Informations de la Facture</h2>
+                
+                <div class="logo-section">
+                    <h3>Logo de l'Entreprise</h3>
+                    <div class="logo-preview" id="logoPreview">
+                        <div class="logo-placeholder">Aperçu du Logo</div>
+                    </div>
+                    <div class="logo-actions">
+                        <div class="file-input-wrapper">
+                            <button class="btn btn-secondary" id="uploadLogoBtn">
+                                📁 Choisir un Logo
+                            </button>
+                            <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+                        </div>
+                        <button class="btn btn-danger" id="removeLogoBtn">🗑 Supprimer</button>
+                    </div>
+                    <div class="logo-size-info">
+                        Recommandé : 200x120 pixels (format paysage)
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyName">Nom de l'Entreprise</label>
+                    <input type="text" id="companyName" value="SOLUTION FOREVER">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyAddress">Adresse de l'Entreprise</label>
+                    <input type="text" id="companyAddress" value="SIDI ALLAL EL BAHRAOUI">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyICE">ICE</label>
+                    <input type="text" id="companyICE" value="002919501000038">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceNumber">N° Facture</label>
+                    <input type="text" id="invoiceNumber" value="#F25-832">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceDate">Date de Facture</label>
+                    <input type="date" id="invoiceDate" value="2025-10-23">
+                </div>
+                
+                <div class="tax-settings">
+                    <h3>Paramètres de Taxe</h3>
+                    <div class="form-group">
+                        <label for="taxRate">Taux de TVA (%)</label>
+                        <input type="number" id="taxRate" min="0" max="100" step="0.1" value="20">
+                    </div>
+                </div>
+                
+                <h2>Articles de la Facture</h2>
+                
+                <div class="auto-fill-notice">
+                    <strong>Astuce :</strong> Sélectionnez un code article pour remplir automatiquement la désignation et le prix.
+                </div>
+                
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Prix Unitaire (HT)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <!-- Les lignes d'articles seront ajoutées ici dynamiquement -->
+                    </tbody>
+                </table>
+                
+                <button id="addItemBtn" class="btn btn-primary" style="margin-top: 15px;">
+                    <span>+</span> Ajouter un Article
+                </button>
+                
+                <div class="form-group">
+                    <label for="companyDetails">Détails de l'Entreprise (Bas de page)</label>
+                    <textarea id="companyDetails" rows="3">SOLUTION FOREVER SARL-12 Rue SABRI BOUIEMAA 1er ETC N 6, Casablanca. Gsm: +212 665648572 RC: 597257 Patente: 32401743 IF: 53991669 ICE: 00337268200022</textarea>
+                </div>
+                
+                <div class="actions">
+                    <button id="generateBtn" class="btn btn-primary">Générer la Facture</button>
+                    <button id="printBtn" class="btn btn-secondary">Imprimer la Facture</button>
+                    <button id="resetBtn" class="btn btn-danger">Réinitialiser</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2>Aperçu de la Facture</h2>
+                <div class="invoice-preview" id="invoicePreview">
+                    <!-- L'aperçu de la facture sera généré ici -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="database-section">
+            <h2>Base de Données des Articles</h2>
+            <p>Gérez votre catalogue d'articles ici. Les articles ajoutés seront disponibles dans la liste déroulante des références.</p>
+            
+            <table class="database-table">
+                <thead>
+                    <tr>
+                        <th>Code Référence</th>
+                        <th>Désignation</th>
+                        <th>Prix Unitaire (HT)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="databaseTableBody">
+                    <!-- Les articles de la base de données seront affichés ici -->
+                </tbody>
+            </table>
+            
+            <div class="database-actions">
+                <button id="addArticleBtn" class="btn btn-primary">Ajouter un Article</button>
+                <button id="saveDatabaseBtn" class="btn btn-secondary">Sauvegarder la Base</button>
+                <button id="loadDatabaseBtn" class="btn btn-warning">Charger la Base</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de données initiale des articles
+        let articlesDatabase = [
+            { code: "P46", designation: "SIROP BLUE CURACAO TOSCHI 1L", prix: 130.00 },
+            { code: "BT-MANG", designation: "BUBBLE TEA MANGUE", prix: 357.50 },
+            { code: "BT-FRAIS", designation: "BUBBLE TEA FRAISE", prix: 357.50 },
+            { code: "BT-BLUE", designation: "BUBBLE TEA BLUEBERRY", prix: 357.50 },
+            { code: "BT-COCO", designation: "BUBBLE TEA COCO", prix: 375.00 },
+            { code: "BT-MENT", designation: "BUBBLE TEA MENTHE", prix: 340.00 },
+            { code: "BT-CHOC", designation: "BUBBLE TEA CHOCOLAT", prix: 390.00 }
+        ];
+
+        // Données initiales pour les articles de la facture
+        const initialItems = [
+            { reference: "P46", designation: "SIROP BLUE CURACAO TOSCHI 1L", quantity: 2, unitPrice: 130.00 },
+            { reference: "BT-MANG", designation: "BUBBLE TEA MANGUE", quantity: 2, unitPrice: 357.50 }
+        ];
+
+        // Variable pour stocker le logo
+        let companyLogo = null;
+
+        // Fonction pour convertir les nombres en lettres (en français)
+        function numberToFrenchWords(num) {
+            const units = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'];
+            const teens = ['dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+            const tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante', 'quatre-vingt', 'quatre-vingt'];
+            const bigNumbers = ['', 'mille', 'million', 'milliard'];
+            
+            if (num === 0) return 'zéro';
+            
+            let words = '';
+            let bigNumberIndex = 0;
+            
+            while (num > 0) {
+                let part = num % 1000;
+                if (part > 0) {
+                    let partWords = '';
+                    
+                    // Centaines
+                    if (part >= 100) {
+                        partWords += units[Math.floor(part / 100)] + ' cent';
+                        part %= 100;
+                        if (part > 0) partWords += ' ';
+                    }
+                    
+                    // Dizaines et unités
+                    if (part >= 10 && part < 20) {
+                        partWords += teens[part - 10];
+                    } else {
+                        if (part >= 20) {
+                            partWords += tens[Math.floor(part / 10)];
+                            part %= 10;
+                            if (part > 0) partWords += '-' + units[part];
+                        } else if (part > 0) {
+                            partWords += units[part];
+                        }
+                    }
+                    
+                    // Ajouter le grand nombre (mille, million, etc.)
+                    if (bigNumberIndex > 0) {
+                        partWords += ' ' + bigNumbers[bigNumberIndex];
+                        if (bigNumberIndex === 1 && part === 1) {
+                            partWords = partWords.replace('un mille', 'mille');
+                        }
+                    }
+                    
+                    words = partWords + (words ? ' ' + words : '');
+                }
+                
+                num = Math.floor(num / 1000);
+                bigNumberIndex++;
+            }
+            
+            return words;
+        }
+
+        // Fonction pour formater un nombre en devise
+        function formatCurrency(amount) {
+            return parseFloat(amount).toFixed(2);
+        }
+
+        // Fonction pour calculer le montant HT d'un article
+        function calculateItemTotal(quantity, unitPrice) {
+            return quantity * unitPrice;
+        }
+
+        // Fonction pour calculer les totaux de la facture
+        function calculateInvoiceTotals() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.item-unitPrice').value) || 0;
+                subtotal += calculateItemTotal(quantity, unitPrice);
+            });
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+            
+            return {
+                subtotal: subtotal,
+                taxAmount: taxAmount,
+                total: total
+            };
+        }
+
+        // Fonction pour mettre à jour les options de la liste déroulante des références
+        function updateReferenceOptions() {
+            const referenceSelects = document.querySelectorAll('.item-reference');
+            referenceSelects.forEach(select => {
+                const currentValue = select.value;
+                
+                // Vider les options existantes
+                select.innerHTML = '';
+                
+                // Ajouter une option vide
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = '-- Sélectionner un article --';
+                select.appendChild(emptyOption);
+                
+                // Ajouter les articles de la base de données
+                articlesDatabase.forEach(article => {
+                    const option = document.createElement('option');
+                    option.value = article.code;
+                    option.textContent = article.code + ' - ' + article.designation;
+                    option.dataset.designation = article.designation;
+                    option.dataset.prix = article.prix;
+                    select.appendChild(option);
+                });
+                
+                // Restaurer la valeur précédente si elle existe toujours
+                if (currentValue) {
+                    select.value = currentValue;
+                }
+            });
+        }
+
+        // Fonction pour ajouter une ligne d'article à la facture
+        function addItemRow(item = { reference: "", designation: "", quantity: 1, unitPrice: 0 }) {
+            const tableBody = document.getElementById('itemsTableBody');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>
+                    <select class="item-reference">
+                        <option value="">-- Sélectionner --</option>
+                        ${articlesDatabase.map(article => 
+                            `<option value="${article.code}" 
+                                      data-designation="${article.designation}" 
+                                      data-prix="${article.prix}"
+                                      ${item.reference === article.code ? 'selected' : ''}>
+                                ${article.code} - ${article.designation}
+                            </option>`
+                        ).join('')}
+                    </select>
+                </td>
+                <td><input type="text" class="item-designation" value="${item.designation}"></td>
+                <td><input type="number" class="item-quantity" min="1" value="${item.quantity}"></td>
+                <td><input type="number" class="item-unitPrice" min="0" step="0.01" value="${item.unitPrice}"></td>
+                <td><button class="btn btn-danger remove-item">✕</button></td>
+            `;
+            
+            tableBody.appendChild(row);
+            
+            // Ajouter un écouteur d'événement pour le bouton de suppression
+            row.querySelector('.remove-item').addEventListener('click', function() {
+                row.remove();
+                generateInvoicePreview();
+            });
+            
+            // Ajouter un écouteur d'événement pour la sélection d'article
+            const referenceSelect = row.querySelector('.item-reference');
+            referenceSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value) {
+                    const designation = selectedOption.dataset.designation;
+                    const prix = selectedOption.dataset.prix;
+                    
+                    row.querySelector('.item-designation').value = designation;
+                    row.querySelector('.item-unitPrice').value = prix;
+                }
+                generateInvoicePreview();
+            });
+            
+            // Ajouter des écouteurs d'événements pour les champs de saisie
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+        }
+
+        // Fonction pour afficher la base de données des articles
+        function displayArticlesDatabase() {
+            const tableBody = document.getElementById('databaseTableBody');
+            tableBody.innerHTML = '';
+            
+            articlesDatabase.forEach((article, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" class="db-code" value="${article.code}"></td>
+                    <td><input type="text" class="db-designation" value="${article.designation}"></td>
+                    <td><input type="number" class="db-prix" value="${article.prix}" step="0.01"></td>
+                    <td>
+                        <button class="btn btn-danger remove-db-item" data-index="${index}">Supprimer</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Ajouter des écouteurs d'événements pour les boutons de suppression
+            document.querySelectorAll('.remove-db-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    articlesDatabase.splice(index, 1);
+                    displayArticlesDatabase();
+                    updateReferenceOptions();
+                });
+            });
+        }
+
+        // Fonction pour ajouter un nouvel article à la base de données
+        function addNewArticle() {
+            articlesDatabase.push({
+                code: 'NOUV-' + (articlesDatabase.length + 1),
+                designation: 'Nouvel article',
+                prix: 0
+            });
+            displayArticlesDatabase();
+            updateReferenceOptions();
+        }
+
+        // Fonction pour sauvegarder la base de données
+        function saveDatabase() {
+            // Mettre à jour les articles avec les valeurs modifiées
+            const rows = document.querySelectorAll('#databaseTableBody tr');
+            rows.forEach((row, index) => {
+                articlesDatabase[index].code = row.querySelector('.db-code').value;
+                articlesDatabase[index].designation = row.querySelector('.db-designation').value;
+                articlesDatabase[index].prix = parseFloat(row.querySelector('.db-prix').value) || 0;
+            });
+            
+            // Sauvegarder dans le localStorage
+            localStorage.setItem('articlesDatabase', JSON.stringify(articlesDatabase));
+            alert('Base de données sauvegardée avec succès !');
+            updateReferenceOptions();
+        }
+
+        // Fonction pour charger la base de données
+        function loadDatabase() {
+            const savedDatabase = localStorage.getItem('articlesDatabase');
+            if (savedDatabase) {
+                articlesDatabase = JSON.parse(savedDatabase);
+                displayArticlesDatabase();
+                updateReferenceOptions();
+                alert('Base de données chargée avec succès !');
+            } else {
+                alert('Aucune base de données sauvegardée trouvée.');
+            }
+        }
+
+        // Fonction pour gérer l'upload du logo
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Vérifier le type de fichier
+                if (!file.type.match('image.*')) {
+                    alert('Veuillez sélectionner un fichier image (JPEG, PNG, etc.)');
+                    return;
+                }
+                
+                // Vérifier la taille du fichier (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Le fichier est trop volumineux. Taille maximale: 2MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    companyLogo = e.target.result;
+                    updateLogoPreview();
+                    generateInvoicePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Fonction pour mettre à jour l'aperçu du logo
+        function updateLogoPreview() {
+            const logoPreview = document.getElementById('logoPreview');
+            if (companyLogo) {
+                logoPreview.innerHTML = `<img src="${companyLogo}" alt="Logo de l'entreprise">`;
+            } else {
+                logoPreview.innerHTML = '<div class="logo-placeholder">Aperçu du Logo</div>';
+            }
+        }
+
+        // Fonction pour supprimer le logo
+        function removeLogo() {
+            companyLogo = null;
+            updateLogoPreview();
+            generateInvoicePreview();
+            document.getElementById('logoUpload').value = '';
+        }
+
+        // Fonction pour générer l'aperçu de la facture
+        function generateInvoicePreview() {
+            const invoicePreview = document.getElementById('invoicePreview');
+            const companyName = document.getElementById('companyName').value;
+            const companyAddress = document.getElementById('companyAddress').value;
+            const companyICE = document.getElementById('companyICE').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const invoiceDate = document.getElementById('invoiceDate').value;
+            const companyDetails = document.getElementById('companyDetails').value;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            
+            // Formater la date
+            const dateObj = new Date(invoiceDate);
+            const formattedDate = dateObj.toLocaleDateString('fr-FR');
+            
+            // Récupérer les articles
+            const items = [];
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            
+            rows.forEach(row => {
+                const reference = row.querySelector('.item-reference').value;
+                const designation = row.querySelector('.item-designation').value;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.item-unitPrice').value) || 0;
+                const total = calculateItemTotal(quantity, unitPrice);
+                
+                items.push({
+                    reference,
+                    designation,
+                    quantity,
+                    unitPrice,
+                    total
+                });
+            });
+            
+            // Calculer les totaux de la facture
+            const totals = calculateInvoiceTotals();
+            
+            // Convertir le total en lettres
+            const totalInWords = numberToFrenchWords(Math.floor(totals.total)) + ' DHS';
+            const cents = Math.round((totals.total - Math.floor(totals.total)) * 100);
+            if (cents > 0) {
+                totalInWords += ' et ' + numberToFrenchWords(cents) + ' centimes';
+            }
+            
+            // Générer le HTML de l'aperçu
+            let previewHTML = `
+                <div class="invoice-header">
+            `;
+            
+            // Ajouter le logo s'il existe
+            if (companyLogo) {
+                previewHTML += `
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <img src="${companyLogo}" alt="Logo" style="max-width: 150px; max-height: 80px;">
+                    </div>
+                `;
+            }
+            
+            previewHTML += `
+                    <h1># FACTURE</h1>
+                    <h2>${companyName}</h2>
+                    <p>${companyAddress}</p>
+                    <p>ICE: ${companyICE}</p>
+                </div>
+                
+                <div class="invoice-details">
+                    <div>
+                        <p><strong>N° Facture</strong></p>
+                        <p>${invoiceNumber}</p>
+                    </div>
+                    <div>
+                        <p><strong>Date De Facture</strong></p>
+                        <p>${formattedDate}</p>
+                    </div>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Px Unitaire (HT)</th>
+                            <th>Montant HT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Ajouter les lignes d'articles
+            items.forEach(item => {
+                previewHTML += `
+                    <tr>
+                        <td>${item.reference}</td>
+                        <td>${item.designation}</td>
+                        <td>${item.quantity}</td>
+                        <td>${formatCurrency(item.unitPrice)}</td>
+                        <td>${formatCurrency(item.total)}</td>
+                    </tr>
+                `;
+            });
+            
+            previewHTML += `
+                    </tbody>
+                </table>
+                
+                <div class="invoice-totals">
+                    <table>
+                        <tr>
+                            <td>Sous-total HT:</td>
+                            <td>${formatCurrency(totals.subtotal)} DHS</td>
+                        </tr>
+                        <tr>
+                            <td>TVA (${taxRate}%):</td>
+                            <td>${formatCurrency(totals.taxAmount)} DHS</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total TTC:</td>
+                            <td>${formatCurrency(totals.total)} DHS</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="total-in-words">
+                    <p><strong>Arrêtée la présente facture à la somme de:</strong></p>
+                    <p>${totalInWords}</p>
+                </div>
+                
+                <div class="invoice-footer">
+                    <p style="margin-top: 30px;">Cachet et Signature:</p>
+                    <div style="margin-top: 50px; text-align: center;">
+                        <p><strong>VISIBLE - ITALIA</strong></p>
+                        <p><strong>TOSCHI</strong></p>
+                        <p><strong>— 1945 —</strong></p>
+                    </div>
+                    <div style="margin-top: 50px; font-size: 12px;">
+                        <p>${companyDetails}</p>
+                    </div>
+                </div>
+            `;
+            
+            invoicePreview.innerHTML = previewHTML;
+        }
+
+        // Fonction pour initialiser l'application
+        function initApp() {
+            // Charger la base de données depuis le localStorage si elle existe
+            loadDatabase();
+            
+            // Afficher la base de données des articles
+            displayArticlesDatabase();
+            
+            // Ajouter les articles initiaux à la facture
+            initialItems.forEach(item => addItemRow(item));
+            
+            // Générer l'aperçu initial
+            generateInvoicePreview();
+            
+            // Ajouter des écouteurs d'événements
+            document.getElementById('addItemBtn').addEventListener('click', function() {
+                addItemRow();
+                generateInvoicePreview();
+            });
+            
+            document.getElementById('generateBtn').addEventListener('click', generateInvoicePreview);
+            
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                if (confirm("Êtes-vous sûr de vouloir réinitialiser la facture ?")) {
+                    document.getElementById('itemsTableBody').innerHTML = '';
+                    initialItems.forEach(item => addItemRow(item));
+                    generateInvoicePreview();
+                }
+            });
+            
+            // Événements pour la base de données
+            document.getElementById('addArticleBtn').addEventListener('click', addNewArticle);
+            document.getElementById('saveDatabaseBtn').addEventListener('click', saveDatabase);
+            document.getElementById('loadDatabaseBtn').addEventListener('click', loadDatabase);
+            
+            // Événements pour le logo
+            document.getElementById('logoUpload').addEventListener('change', handleLogoUpload);
+            document.getElementById('uploadLogoBtn').addEventListener('click', function() {
+                document.getElementById('logoUpload').click();
+            });
+            document.getElementById('removeLogoBtn').addEventListener('click', removeLogo);
+            
+            // Ajouter des écouteurs d'événements pour les champs de formulaire
+            const formInputs = document.querySelectorAll('.form-section input, .form-section textarea, .form-section select');
+            formInputs.forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+        }
+
+        // Initialiser l'application lorsque la page est chargée
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
