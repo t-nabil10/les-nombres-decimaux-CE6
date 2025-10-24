@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Factures SOLUTION FOREVER</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .app-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-section, .preview-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+        
+        .items-table th, .items-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .items-table th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .items-table input {
+            border: none;
+            background: transparent;
+            width: 100%;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #27ae60;
+        }
+        
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .invoice-preview {
+            background: white;
+            padding: 30px;
+            border: 1px solid #dee2e6;
+            min-height: 600px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+        }
+        
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .invoice-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .invoice-totals {
+            width: 300px;
+            margin-left: auto;
+            margin-top: 20px;
+        }
+        
+        .invoice-totals table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .invoice-totals td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            border-top: 2px solid #3498db;
+            background: #f8f9fa;
+        }
+        
+        .total-in-words {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-style: italic;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .company-details {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="app-title">Générateur de Factures - SOLUTION FOREVER</h1>
+        
+        <div class="app-container">
+            <div class="form-section">
+                <h2>Informations de la Facture</h2>
+                
+                <div class="form-group">
+                    <label for="companyName">Nom de l'Entreprise</label>
+                    <input type="text" id="companyName" value="SOLUTION FOREVER">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyAddress">Adresse</label>
+                    <input type="text" id="companyAddress" value="SIDI ALLAL EL BAHRAOUI">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyICE">ICE</label>
+                    <input type="text" id="companyICE" value="002919501000038">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceNumber">N° Facture</label>
+                    <input type="text" id="invoiceNumber" value="#F25-832">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceDate">Date de Facture</label>
+                    <input type="date" id="invoiceDate" value="2025-10-23">
+                </div>
+                
+                <h2>Articles</h2>
+                
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Prix Unitaire (HT)</th>
+                            <th>Montant HT</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <tr>
+                            <td><input type="text" class="item-reference" value="P46"></td>
+                            <td><input type="text" class="item-designation" value="SIROP BLUE CURACAO TOSCHI 1L"></td>
+                            <td><input type="number" class="item-quantity" value="2" min="0"></td>
+                            <td><input type="number" class="item-unitPrice" value="130.00" step="0.01" min="0"></td>
+                            <td><span class="item-total">260.00</span></td>
+                            <td><button class="btn btn-danger remove-item">✕</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button id="addItemBtn" class="btn btn-primary">+ Ajouter un Article</button>
+                
+                <div class="form-group">
+                    <label for="taxRate">Taux de TVA (%)</label>
+                    <input type="number" id="taxRate" value="20" min="0" max="100" step="0.1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyDetails">Détails de l'Entreprise</label>
+                    <textarea id="companyDetails" rows="3">SOLUTION FOREVER SARL-12 Rue SABRI BOUIEMAA 1er ETC N 6, Casablanca. Gsm: +212 665648572 RC: 597257 Patente: 32401743 IF: 53991669 ICE: 00337268200022</textarea>
+                </div>
+                
+                <div class="actions">
+                    <button id="generateBtn" class="btn btn-primary">Générer la Facture</button>
+                    <button id="printBtn" class="btn btn-secondary">Imprimer la Facture</button>
+                    <button id="resetBtn" class="btn btn-danger">Réinitialiser</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2>Aperçu de la Facture</h2>
+                <div class="invoice-preview" id="invoicePreview">
+                    <!-- L'aperçu sera généré ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour formater un nombre en devise
+        function formatCurrency(amount) {
+            return parseFloat(amount).toFixed(2);
+        }
+
+        // Fonction pour calculer le montant HT d'un article
+        function calculateItemTotal(quantity, unitPrice) {
+            return quantity * unitPrice;
+        }
+
+        // Fonction pour mettre à jour le total d'une ligne d'article
+        function updateItemTotal(row) {
+            const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+            const unitPrice = parseFloat(row.querySelector('.item-unitPrice').value) || 0;
+            const total = calculateItemTotal(quantity, unitPrice);
+            row.querySelector('.item-total').textContent = formatCurrency(total);
+            return total;
+        }
+
+        // Fonction pour calculer les totaux de la facture
+        function calculateInvoiceTotals() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            
+            rows.forEach(row => {
+                subtotal += updateItemTotal(row);
+            });
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+            
+            return {
+                subtotal: subtotal,
+                taxAmount: taxAmount,
+                total: total
+            };
+        }
+
+        // Fonction pour convertir les nombres en lettres (version simplifiée)
+        function numberToFrenchWords(num) {
+            if (num === 0) return 'zéro';
+            
+            const units = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'];
+            const teens = ['dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+            const tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
+            
+            let words = '';
+            
+            if (num >= 100) {
+                words += units[Math.floor(num / 100)] + ' cent ';
+                num %= 100;
+            }
+            
+            if (num >= 10 && num < 20) {
+                words += teens[num - 10] + ' ';
+            } else if (num >= 20) {
+                words += tens[Math.floor(num / 10)] + ' ';
+                num %= 10;
+                if (num > 0) {
+                    words += units[num] + ' ';
+                }
+            } else if (num > 0) {
+                words += units[num] + ' ';
+            }
+            
+            return words.trim() + ' DHS';
+        }
+
+        // Fonction pour ajouter une ligne d'article
+        function addItemRow() {
+            const tableBody = document.getElementById('itemsTableBody');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td><input type="text" class="item-reference" value=""></td>
+                <td><input type="text" class="item-designation" value=""></td>
+                <td><input type="number" class="item-quantity" value="1" min="0"></td>
+                <td><input type="number" class="item-unitPrice" value="0" step="0.01" min="0"></td>
+                <td><span class="item-total">0.00</span></td>
+                <td><button class="btn btn-danger remove-item">✕</button></td>
+            `;
+            
+            tableBody.appendChild(row);
+            
+            // Ajouter les écouteurs d'événements
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+            
+            row.querySelector('.remove-item').addEventListener('click', function() {
+                row.remove();
+                generateInvoicePreview();
+            });
+        }
+
+        // Fonction pour générer l'aperçu de la facture
+        function generateInvoicePreview() {
+            const invoicePreview = document.getElementById('invoicePreview');
+            const companyName = document.getElementById('companyName').value;
+            const companyAddress = document.getElementById('companyAddress').value;
+            const companyICE = document.getElementById('companyICE').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const invoiceDate = document.getElementById('invoiceDate').value;
+            const companyDetails = document.getElementById('companyDetails').value;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            
+            // Formater la date
+            const dateObj = new Date(invoiceDate);
+            const formattedDate = dateObj.toLocaleDateString('fr-FR');
+            
+            // Récupérer les articles et calculer les totaux
+            const items = [];
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            let subtotal = 0;
+            
+            rows.forEach(row => {
+                const reference = row.querySelector('.item-reference').value;
+                const designation = row.querySelector('.item-designation').value;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.item-unitPrice').value) || 0;
+                const total = calculateItemTotal(quantity, unitPrice);
+                
+                items.push({
+                    reference,
+                    designation,
+                    quantity,
+                    unitPrice,
+                    total
+                });
+                
+                subtotal += total;
+            });
+            
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+            
+            // Convertir le total en lettres
+            const totalInWords = numberToFrenchWords(Math.floor(total)) + (total % 1 !== 0 ? ' et ' + Math.round((total % 1) * 100) + ' centimes' : '');
+            
+            // Générer le HTML de l'aperçu
+            let previewHTML = `
+                <div class="invoice-header">
+                    <h1># FACTURE</h1>
+                    <h2>${companyName}</h2>
+                    <p>${companyAddress}</p>
+                    <p>ICE: ${companyICE}</p>
+                </div>
+                
+                <div class="invoice-details">
+                    <div>
+                        <p><strong>N° Facture</strong></p>
+                        <p>${invoiceNumber}</p>
+                    </div>
+                    <div>
+                        <p><strong>Date De Facture</strong></p>
+                        <p>${formattedDate}</p>
+                    </div>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Px Unitaire (HT)</th>
+                            <th>Montant HT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Ajouter les lignes d'articles
+            items.forEach(item => {
+                if (item.reference || item.designation) {
+                    previewHTML += `
+                        <tr>
+                            <td>${item.reference}</td>
+                            <td>${item.designation}</td>
+                            <td>${item.quantity}</td>
+                            <td>${formatCurrency(item.unitPrice)}</td>
+                            <td>${formatCurrency(item.total)}</td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            previewHTML += `
+                    </tbody>
+                </table>
+                
+                <div class="invoice-totals">
+                    <table>
+                        <tr>
+                            <td>Sous-total HT:</td>
+                            <td>${formatCurrency(subtotal)} DHS</td>
+                        </tr>
+                        <tr>
+                            <td>TVA (${taxRate}%):</td>
+                            <td>${formatCurrency(taxAmount)} DHS</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total TTC:</td>
+                            <td>${formatCurrency(total)} DHS</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="total-in-words">
+                    <p><strong>Arrêtée la présente facture à la somme de:</strong></p>
+                    <p>${totalInWords}</p>
+                </div>
+                
+                <div class="invoice-footer">
+                    <p style="margin-top: 30px;">Cachet et Signature:</p>
+                    <div style="margin-top: 50px; text-align: center;">
+                        <p><strong>VISIBLE - ITALIA</strong></p>
+                        <p><strong>TOSCHI</strong></p>
+                        <p><strong>— 1945 —</strong></p>
+                    </div>
+                </div>
+                
+                <div class="company-details">
+                    <p>${companyDetails}</p>
+                </div>
+            `;
+            
+            invoicePreview.innerHTML = previewHTML;
+        }
+
+        // Fonction pour initialiser l'application
+        function initApp() {
+            // Ajouter les écouteurs d'événements
+            document.getElementById('addItemBtn').addEventListener('click', addItemRow);
+            document.getElementById('generateBtn').addEventListener('click', generateInvoicePreview);
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                if (confirm("Êtes-vous sûr de vouloir réinitialiser la facture ?")) {
+                    document.getElementById('itemsTableBody').innerHTML = `
+                        <tr>
+                            <td><input type="text" class="item-reference" value="P46"></td>
+                            <td><input type="text" class="item-designation" value="SIROP BLUE CURACAO TOSCHI 1L"></td>
+                            <td><input type="number" class="item-quantity" value="2" min="0"></td>
+                            <td><input type="number" class="item-unitPrice" value="130.00" step="0.01" min="0"></td>
+                            <td><span class="item-total">260.00</span></td>
+                            <td><button class="btn btn-danger remove-item">✕</button></td>
+                        </tr>
+                    `;
+                    // Réattacher les écouteurs d'événements
+                    document.querySelectorAll('.remove-item').forEach(button => {
+                        button.addEventListener('click', function() {
+                            this.closest('tr').remove();
+                            generateInvoicePreview();
+                        });
+                    });
+                    document.querySelectorAll('#itemsTableBody input').forEach(input => {
+                        input.addEventListener('input', generateInvoicePreview);
+                    });
+                    generateInvoicePreview();
+                }
+            });
+
+            // Ajouter des écouteurs d'événements pour les champs existants
+            document.querySelectorAll('#itemsTableBody input').forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('tr').remove();
+                    generateInvoicePreview();
+                });
+            });
+
+            // Ajouter des écouteurs pour les champs de formulaire principaux
+            const formInputs = document.querySelectorAll('.form-section input, .form-section textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', generateInvoicePreview);
+            });
+
+            // Générer l'aperçu initial
+            generateInvoicePreview();
+        }
+
+        // Initialiser l'application lorsque la page est chargée
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
