@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Copropriété</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .sidebar .nav-link {
+            color: var(--light-color);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .table th {
+            background-color: var(--light-color);
+        }
+        
+        .badge-pending {
+            background-color: #f39c12;
+        }
+        
+        .badge-paid {
+            background-color: var(--success-color);
+        }
+        
+        .badge-overdue {
+            background-color: var(--accent-color);
+        }
+        
+        .logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .logo h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="logo">
+                    <h3><i class="fas fa-building"></i> CoproManager</h3>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-target="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="coproprietaires">
+                            <i class="fas fa-users"></i> Copropriétaires
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="cotisations">
+                            <i class="fas fa-money-bill-wave"></i> Cotisations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="depenses">
+                            <i class="fas fa-receipt"></i> Dépenses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="rapports">
+                            <i class="fas fa-chart-bar"></i> Rapports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="parametres">
+                            <i class="fas fa-cog"></i> Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="content-section active">
+                    <div class="dashboard-header">
+                        <h2>Tableau de bord</h2>
+                        <div>
+                            <span class="me-3">Bienvenue, Admin</span>
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-bell"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-users"></i>
+                                <div class="value">12</div>
+                                <div class="label">Copropriétaires</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div class="value">8,450€</div>
+                                <div class="label">Cotisations ce mois</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-receipt"></i>
+                                <div class="value">5,230€</div>
+                                <div class="label">Dépenses ce mois</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-chart-line"></i>
+                                <div class="value">3,220€</div>
+                                <div class="label">Solde actuel</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Cotisations en attente
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Copropriétaire</th>
+                                                    <th>Montant</th>
+                                                    <th>Échéance</th>
+                                                    <th>Statut</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Martin Dupont</td>
+                                                    <td>150€</td>
+                                                    <td>15/06/2023</td>
+                                                    <td><span class="badge badge-pending">En attente</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sophie Leroy</td>
+                                                    <td>150€</td>
+                                                    <td>15/06/2023</td>
+                                                    <td><span class="badge badge-overdue">En retard</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Pierre Moreau</td>
+                                                    <td>150€</td>
+                                                    <td>15/06/2023</td>
+                                                    <td><span class="badge badge-paid">Payé</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Dépenses récentes
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Description</th>
+                                                    <th>Montant</th>
+                                                    <th>Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><i class="fas fa-bolt text-warning"></i> Électricité</td>
+                                                    <td>Facture commune</td>
+                                                    <td>320€</td>
+                                                    <td>10/06/2023</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-broom text-info"></i> Nettoyage</td>
+                                                    <td>Femme de ménage</td>
+                                                    <td>450€</td>
+                                                    <td>05/06/2023</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-tools text-secondary"></i> Entretien</td>
+                                                    <td>Outils de ménage</td>
+                                                    <td>85€</td>
+                                                    <td>01/06/2023</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Copropriétaires Section -->
+                <div id="coproprietaires" class="content-section">
+                    <div class="dashboard-header">
+                        <h2>Gestion des Copropriétaires</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter un copropriétaire
+                        </button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Liste des copropriétaires</span>
+                            <div class="input-group" style="width: 300px;">
+                                <input type="text" class="form-control" placeholder="Rechercher...">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Appartement</th>
+                                            <th>Téléphone</th>
+                                            <th>Email</th>
+                                            <th>Cotisation mensuelle</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Martin Dupont</td>
+                                            <td>A1</td>
+                                            <td>01 23 45 67 89</td>
+                                            <td>martin.dupont@email.com</td>
+                                            <td>150€</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sophie Leroy</td>
+                                            <td>A2</td>
+                                            <td>01 34 56 78 90</td>
+                                            <td>sophie.leroy@email.com</td>
+                                            <td>150€</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pierre Moreau</td>
+                                            <td>B1</td>
+                                            <td>01 45 67 89 01</td>
+                                            <td>pierre.moreau@email.com</td>
+                                            <td>180€</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cotisations Section -->
+                <div id="cotisations" class="content-section">
+                    <div class="dashboard-header">
+                        <h2>Gestion des Cotisations</h2>
+                        <div>
+                            <button class="btn btn-outline-primary me-2">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Nouvelle cotisation
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#">Toutes</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">En attente</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Payées</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">En retard</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Référence</th>
+                                            <th>Copropriétaire</th>
+                                            <th>Période</th>
+                                            <th>Montant</th>
+                                            <th>Échéance</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>COT-2023-001</td>
+                                            <td>Martin Dupont</td>
+                                            <td>Juin 2023</td>
+                                            <td>150€</td>
+                                            <td>15/06/2023</td>
+                                            <td><span class="badge badge-pending">En attente</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>COT-2023-002</td>
+                                            <td>Sophie Leroy</td>
+                                            <td>Juin 2023</td>
+                                            <td>150€</td>
+                                            <td>15/06/2023</td>
+                                            <td><span class="badge badge-overdue">En retard</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>COT-2023-003</td>
+                                            <td>Pierre Moreau</td>
+                                            <td>Juin 2023</td>
+                                            <td>180€</td>
+                                            <td>15/06/2023</td>
+                                            <td><span class="badge badge-paid">Payé</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dépenses Section -->
+                <div id="depenses" class="content-section">
+                    <div class="dashboard-header">
+                        <h2>Gestion des Dépenses</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nouvelle dépense
+                        </button>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-bolt text-warning"></i>
+                                <div class="value">320€</div>
+                                <div class="label">Électricité (mois)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-broom text-info"></i>
+                                <div class="value">450€</div>
+                                <div class="label">Nettoyage (mois)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-tools text-secondary"></i>
+                                <div class="value">85€</div>
+                                <div class="label">Entretien (mois)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <i class="fas fa-file-invoice-dollar text-success"></i>
+                                <div class="value">1,230€</div>
+                                <div class="label">Autres (mois)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            Historique des dépenses
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Montant</th>
+                                            <th>Justificatif</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>10/06/2023</td>
+                                            <td><i class="fas fa-bolt text-warning"></i> Électricité</td>
+                                            <td>Facture commune</td>
+                                            <td>320€</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-file-pdf"></i> Voir
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>05/06/2023</td>
+                                            <td><i class="fas fa-broom text-info"></i> Nettoyage</td>
+                                            <td>Femme de ménage</td>
+                                            <td>450€</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-file-pdf"></i> Voir
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>01/06/2023</td>
+                                            <td><i class="fas fa-tools text-secondary"></i> Entretien</td>
+                                            <td>Outils de ménage</td>
+                                            <td>85€</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-file-pdf"></i> Voir
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rapports Section -->
+                <div id="rapports" class="content-section">
+                    <div class="dashboard-header">
+                        <h2>Rapports et Statistiques</h2>
+                        <div>
+                            <button class="btn btn-outline-primary me-2">
+                                <i class="fas fa-print"></i> Imprimer
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-download"></i> Exporter PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    Évolution des revenus et dépenses (6 derniers mois)
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="financeChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    Répartition des dépenses (ce mois)
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="expensesChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    État des cotisations (ce mois)
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="contributionsChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Top 5 des dépenses récurrentes
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-broom text-info me-2"></i>
+                                                Femme de ménage
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">450€</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-bolt text-warning me-2"></i>
+                                                Électricité
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">320€</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-shield-alt text-success me-2"></i>
+                                                Assurance
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">210€</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-tint text-info me-2"></i>
+                                                Eau
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">180€</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-tools text-secondary me-2"></i>
+                                                Entretien
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">85€</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Paramètres Section -->
+                <div id="parametres" class="content-section">
+                    <div class="dashboard-header">
+                        <h2>Paramètres</h2>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Informations de la copropriété
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="buildingName" class="form-label">Nom de l'immeuble</label>
+                                            <input type="text" class="form-control" id="buildingName" value="Résidence Les Jardins">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="buildingAddress" class="form-label">Adresse</label>
+                                            <input type="text" class="form-control" id="buildingAddress" value="123 Avenue de la République, 75011 Paris">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="buildingYear" class="form-label">Année de construction</label>
+                                            <input type="number" class="form-control" id="buildingYear" value="1995">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="totalUnits" class="form-label">Nombre d'appartements</label>
+                                            <input type="number" class="form-control" id="totalUnits" value="12">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Paramètres financiers
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="defaultContribution" class="form-label">Cotisation mensuelle par défaut</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="defaultContribution" value="150">
+                                                <span class="input-group-text">€</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="dueDate" class="form-label">Jour d'échéance des cotisations</label>
+                                            <input type="number" class="form-control" id="dueDate" min="1" max="31" value="15">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="currency" class="form-label">Devise</label>
+                                            <select class="form-control" id="currency">
+                                                <option>Euro (€)</option>
+                                                <option>Dollar ($)</option>
+                                                <option>Livre (£)</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="autoReminders" checked>
+                                            <label class="form-check-label" for="autoReminders">Rappels automatiques pour les cotisations en retard</label>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    Types de dépenses
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="electricity" checked>
+                                                <label class="form-check-label" for="electricity">
+                                                    <i class="fas fa-bolt text-warning me-1"></i> Électricité
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="cleaning" checked>
+                                                <label class="form-check-label" for="cleaning">
+                                                    <i class="fas fa-broom text-info me-1"></i> Nettoyage
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="maintenance" checked>
+                                                <label class="form-check-label" for="maintenance">
+                                                    <i class="fas fa-tools text-secondary me-1"></i> Entretien
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="water" checked>
+                                                <label class="form-check-label" for="water">
+                                                    <i class="fas fa-tint text-info me-1"></i> Eau
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="insurance" checked>
+                                                <label class="form-check-label" for="insurance">
+                                                    <i class="fas fa-shield-alt text-success me-1"></i> Assurance
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="heating">
+                                                <label class="form-check-label" for="heating">
+                                                    <i class="fas fa-fire text-danger me-1"></i> Chauffage
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="elevator">
+                                                <label class="form-check-label" for="elevator">
+                                                    <i class="fas fa-arrow-up text-secondary me-1"></i> Ascenseur
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="gardening">
+                                                <label class="form-check-label" for="gardening">
+                                                    <i class="fas fa-leaf text-success me-1"></i> Jardinage
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary mt-3">Enregistrer les types de dépenses</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Navigation entre les sections
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Mettre à jour la navigation active
+                document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Afficher la section correspondante
+                const targetId = this.getAttribute('data-target');
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+        
+        // Initialisation des graphiques (simplifiée)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Graphique des finances
+            const financeCtx = document.getElementById('financeChart').getContext('2d');
+            const financeChart = new Chart(financeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                    datasets: [{
+                        label: 'Revenus',
+                        data: [7200, 7500, 7800, 8100, 8400, 8450],
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }, {
+                        label: 'Dépenses',
+                        data: [4800, 5200, 4900, 5100, 5300, 5230],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des dépenses
+            const expensesCtx = document.getElementById('expensesChart').getContext('2d');
+            const expensesChart = new Chart(expensesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Électricité', 'Nettoyage', 'Entretien', 'Autres'],
+                    datasets: [{
+                        data: [320, 450, 85, 1230],
+                        backgroundColor: [
+                            '#f39c12',
+                            '#3498db',
+                            '#95a5a6',
+                            '#2ecc71'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des cotisations
+            const contributionsCtx = document.getElementById('contributionsChart').getContext('2d');
+            const contributionsChart = new Chart(contributionsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Payées', 'En attente', 'En retard'],
+                    datasets: [{
+                        label: 'Nombre de cotisations',
+                        data: [8, 2, 2],
+                        backgroundColor: [
+                            '#2ecc71',
+                            '#f39c12',
+                            '#e74c3c'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+  </html>
