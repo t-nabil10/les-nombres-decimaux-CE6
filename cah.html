@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathBook Maker - Votre cahier de texte numérique</title>
+    <title>MathBook Maker - Gestion des chapitres</title>
     <!-- KaTeX pour les formules mathématiques -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -33,6 +33,7 @@
             background: #2c3e50;
             color: white;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .logo {
@@ -48,30 +49,82 @@
         }
 
         .nav-section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .nav-section h3 {
             color: #ecf0f1;
             margin-bottom: 15px;
             font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .nav-item {
-            padding: 10px 15px;
-            margin: 5px 0;
-            background: #34495e;
-            border-radius: 5px;
+        .add-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
-            transition: background 0.3s;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .nav-item:hover {
-            background: #3498db;
+        .add-btn:hover {
+            background: #219a52;
         }
 
-        .nav-item.active {
+        .chapter-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #34495e;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chapter-item:hover {
+            background: #3d566e;
+            transform: translateX(5px);
+        }
+
+        .chapter-item.active {
             background: #2980b9;
+            border-left-color: #e74c3c;
+        }
+
+        .chapter-actions {
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .chapter-item:hover .chapter-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #ecf0f1;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.2);
         }
 
         .btn {
@@ -99,6 +152,14 @@
             background: #219a52;
         }
 
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
         /* Main Content */
         .main-content {
             padding: 20px;
@@ -111,6 +172,24 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chapter-info {
+            flex-grow: 1;
+        }
+
+        .chapter-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .chapter-meta {
+            color: #7f8c8d;
+            font-size: 0.9em;
         }
 
         .editor-container {
@@ -164,12 +243,19 @@
             min-height: 100px;
         }
 
-        /* Session List */
+        /* Sessions List */
         .session-list {
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 20px;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .session-item {
@@ -216,37 +302,82 @@
         .modal-content {
             background: white;
             margin: 50px auto;
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
         }
 
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
+            color: #2c3e50;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #bdc3c7;
             border-radius: 5px;
             font-size: 1em;
+            transition: border-color 0.3s;
         }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        /* Chapitre colors */
+        .chapter-color-1 { border-left-color: #e74c3c; }
+        .chapter-color-2 { border-left-color: #3498db; }
+        .chapter-color-3 { border-left-color: #27ae60; }
+        .chapter-color-4 { border-left-color: #f39c12; }
+        .chapter-color-5 { border-left-color: #9b59b6; }
+        .chapter-color-6 { border-left-color: #1abc9c; }
 
         /* Print Styles */
         @media print {
-            .sidebar, .editor-toolbar, .btn {
+            .sidebar, .editor-toolbar, .btn, .chapter-actions {
                 display: none !important;
             }
             
@@ -272,10 +403,13 @@
             </div>
 
             <div class="nav-section">
-                <h3>📖 Mes Chapitres</h3>
-                <div class="nav-item active" onclick="showChapter('chap1')">Théorème de Pythagore</div>
-                <div class="nav-item" onclick="showChapter('chap2')">Calcul littéral</div>
-                <div class="nav-item" onclick="showChapter('chap3')">Équations</div>
+                <h3>
+                    📖 Mes Chapitres
+                    <button class="add-btn" onclick="showNewChapterModal()">+</button>
+                </h3>
+                <div id="chapters-list">
+                    <!-- Les chapitres seront générés dynamiquement ici -->
+                </div>
             </div>
 
             <div class="nav-section">
@@ -287,7 +421,10 @@
             <div class="nav-section">
                 <h3>⚙️ Export</h3>
                 <button class="btn btn-success" onclick="generatePDF()">
-                    📄 Générer PDF
+                    📄 Générer PDF du Chapitre
+                </button>
+                <button class="btn btn-warning" onclick="generateFullPDF()">
+                    📚 Générer PDF Complet
                 </button>
                 <button class="btn" onclick="showPrintPreview()">
                     👁️ Aperçu Impression
@@ -304,12 +441,20 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h2 id="current-chapter">Théorème de Pythagore</h2>
-                <p id="current-date">Séance du 15 mars 2024 - Durée: 2h</p>
+                <div class="chapter-info">
+                    <h1 class="chapter-title" id="current-chapter-title">Sélectionnez un chapitre</h1>
+                    <div class="chapter-meta" id="current-chapter-meta">
+                        Cliquez sur un chapitre dans la sidebar pour commencer
+                    </div>
+                </div>
+                <div class="chapter-actions-main">
+                    <button class="btn" onclick="editCurrentChapter()">✏️ Modifier</button>
+                    <button class="btn btn-warning" onclick="showChapterStats()">📊 Statistiques</button>
+                </div>
             </div>
 
-            <!-- Editor -->
-            <div class="editor-container">
+            <!-- Editor (caché initialement) -->
+            <div class="editor-container" id="editor-container" style="display: none;">
                 <div class="editor-toolbar">
                     <button class="tool-btn" onclick="formatText('bold')"><b>B</b></button>
                     <button class="tool-btn" onclick="formatText('italic')"><i>I</i></button>
@@ -317,7 +462,7 @@
                     <button class="tool-btn" onclick="insertBullet()">• Liste</button>
                     <button class="tool-btn" onclick="insertMath()">∑ Math</button>
                     <button class="tool-btn" onclick="insertImage()">🖼️ Image</button>
-                    <button class="tool-btn" onclick="saveSession()">💾 Sauvegarder</button>
+                    <button class="tool-btn" onclick="saveCurrentSession()">💾 Sauvegarder</button>
                 </div>
 
                 <div 
@@ -326,24 +471,7 @@
                     contenteditable="true"
                     oninput="updatePreview()"
                 >
-                    <h3>Objectifs de la séance</h3>
-                    <ul>
-                        <li>Comprendre le théorème de Pythagore</li>
-                        <li>Savoir calculer l'hypoténuse d'un triangle rectangle</li>
-                        <li>Résoudre des problèmes concrets</li>
-                    </ul>
-
-                    <h3>Leçon</h3>
-                    <p>Dans un triangle rectangle, le carré de l'hypoténuse est égal à la somme des carrés des deux autres côtés.</p>
-                    <p>Si ABC est un triangle rectangle en A, alors :</p>
-                    <p class="math-formula">BC² = AB² + AC²</p>
-
-                    <h3>Exercices</h3>
-                    <p><strong>Exercice 1 :</strong> Calculer l'hypoténuse d'un triangle rectangle dont les côtés mesurent 3 cm et 4 cm.</p>
-                    <p><strong>Exercice 2 :</strong> Un triangle a des côtés de 5 cm, 12 cm et 13 cm. Est-il rectangle ?</p>
-
-                    <h3>Devoirs</h3>
-                    <p>Exercices 15, 16 et 17 page 124 - À rendre pour le 18 mars</p>
+                    <p>Sélectionnez une séance ou créez-en une nouvelle pour commencer l'édition.</p>
                 </div>
 
                 <div class="math-preview" id="math-preview">
@@ -353,23 +481,119 @@
             </div>
 
             <!-- Sessions List -->
-            <div class="session-list">
-                <h3>📋 Séances de ce chapitre</h3>
-                <div class="session-item active">
-                    <div class="session-date">15/03/2024 - 2h</div>
-                    <div class="session-title">Découverte du théorème</div>
-                    <div class="session-content-preview">Introduction au théorème de Pythagore avec exemples simples...</div>
+            <div class="session-list" id="session-list" style="display: none;">
+                <div class="session-header">
+                    <h3>📋 Séances de ce chapitre</h3>
+                    <button class="btn" onclick="showNewSessionModal()">➕ Nouvelle Séance</button>
                 </div>
-                <div class="session-item">
-                    <div class="session-date">18/03/2024 - 2h</div>
-                    <div class="session-title">Applications et problèmes</div>
-                    <div class="session-content-preview">Résolution de problèmes concrets utilisant le théorème...</div>
+                <div id="sessions-container">
+                    <!-- Les séances seront générées dynamiquement ici -->
                 </div>
-                <div class="session-item">
-                    <div class="session-date">22/03/2024 - 1h</div>
-                    <div class="session-title">Évaluation</div>
-                    <div class="session-content-preview">Contrôle sur le théorème de Pythagore...</div>
-                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Chapter Modal -->
+    <div class="modal" id="newChapterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📖 Nouveau Chapitre</h3>
+                <button class="close-btn" onclick="hideModal('newChapterModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Titre du chapitre</label>
+                <input type="text" id="chapter-title" placeholder="Ex: Théorème de Pythagore">
+            </div>
+            <div class="form-group">
+                <label>Matière</label>
+                <select id="chapter-subject">
+                    <option value="maths">Mathématiques</option>
+                    <option value="physics">Physique-Chimie</option>
+                    <option value="french">Français</option>
+                    <option value="history">Histoire-Géographie</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Niveau</label>
+                <select id="chapter-level">
+                    <option value="4eme">4ème</option>
+                    <option value="3eme">3ème</option>
+                    <option value="2nde">Seconde</option>
+                    <option value="1ere">Première</option>
+                    <option value="terminale">Terminale</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="chapter-description" rows="3" placeholder="Description du chapitre..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Couleur d'identification</label>
+                <select id="chapter-color">
+                    <option value="1">Rouge</option>
+                    <option value="2">Bleu</option>
+                    <option value="3">Vert</option>
+                    <option value="4">Orange</option>
+                    <option value="5">Violet</option>
+                    <option value="6">Turquoise</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="createNewChapter()">Créer le chapitre</button>
+                <button class="btn" onclick="hideModal('newChapterModal')">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Chapter Modal -->
+    <div class="modal" id="editChapterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Modifier le Chapitre</h3>
+                <button class="close-btn" onclick="hideModal('editChapterModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Titre du chapitre</label>
+                <input type="text" id="edit-chapter-title">
+            </div>
+            <div class="form-group">
+                <label>Matière</label>
+                <select id="edit-chapter-subject">
+                    <option value="maths">Mathématiques</option>
+                    <option value="physics">Physique-Chimie</option>
+                    <option value="french">Français</option>
+                    <option value="history">Histoire-Géographie</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Niveau</label>
+                <select id="edit-chapter-level">
+                    <option value="4eme">4ème</option>
+                    <option value="3eme">3ème</option>
+                    <option value="2nde">Seconde</option>
+                    <option value="1ere">Première</option>
+                    <option value="terminale">Terminale</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="edit-chapter-description" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Couleur d'identification</label>
+                <select id="edit-chapter-color">
+                    <option value="1">Rouge</option>
+                    <option value="2">Bleu</option>
+                    <option value="3">Vert</option>
+                    <option value="4">Orange</option>
+                    <option value="5">Violet</option>
+                    <option value="6">Turquoise</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="updateChapter()">Enregistrer</button>
+                <button class="btn btn-warning" onclick="deleteCurrentChapter()">🗑️ Supprimer</button>
+                <button class="btn" onclick="hideModal('editChapterModal')">Annuler</button>
             </div>
         </div>
     </div>
@@ -377,7 +601,10 @@
     <!-- New Session Modal -->
     <div class="modal" id="newSessionModal">
         <div class="modal-content">
-            <h3>➕ Nouvelle Séance</h3>
+            <div class="modal-header">
+                <h3>➕ Nouvelle Séance</h3>
+                <button class="close-btn" onclick="hideModal('newSessionModal')">&times;</button>
+            </div>
             <div class="form-group">
                 <label>Titre de la séance</label>
                 <input type="text" id="session-title" placeholder="Ex: Découverte du théorème de Pythagore">
@@ -391,20 +618,360 @@
                 <input type="number" id="session-duration" value="1" min="0.5" step="0.5">
             </div>
             <div class="form-group">
-                <label>Chapitre</label>
-                <select id="session-chapter">
-                    <option value="chap1">Théorème de Pythagore</option>
-                    <option value="chap2">Calcul littéral</option>
-                    <option value="chap3">Équations</option>
-                </select>
+                <label>Objectifs pédagogiques</label>
+                <textarea id="session-objectives" rows="3" placeholder="Objectifs de la séance..."></textarea>
             </div>
-            <button class="btn btn-success" onclick="createNewSession()">Créer la séance</button>
-            <button class="btn" onclick="hideModal('newSessionModal')">Annuler</button>
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="createNewSession()">Créer la séance</button>
+                <button class="btn" onclick="hideModal('newSessionModal')">Annuler</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Gestion de l'éditeur
+        // Données des chapitres
+        let chapters = JSON.parse(localStorage.getItem('chapters')) || [
+            {
+                id: 1,
+                title: "Théorème de Pythagore",
+                subject: "maths",
+                level: "4eme",
+                description: "Découverte et application du théorème de Pythagore",
+                color: 1,
+                sessions: [],
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 2,
+                title: "Calcul littéral",
+                subject: "maths", 
+                level: "4eme",
+                description: "Initiation au calcul littéral et aux équations",
+                color: 2,
+                sessions: [],
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        let currentChapterId = null;
+        let currentSessionId = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            renderChaptersList();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('session-date').value = today;
+            
+            // Sélectionner le premier chapitre par défaut
+            if (chapters.length > 0) {
+                selectChapter(chapters[0].id);
+            }
+        }
+
+        function renderChaptersList() {
+            const container = document.getElementById('chapters-list');
+            container.innerHTML = '';
+
+            chapters.forEach(chapter => {
+                const chapterElement = document.createElement('div');
+                chapterElement.className = `chapter-item chapter-color-${chapter.color} ${currentChapterId === chapter.id ? 'active' : ''}`;
+                chapterElement.innerHTML = `
+                    <div>
+                        <div style="font-weight: bold;">${chapter.title}</div>
+                        <div style="font-size: 0.8em; opacity: 0.8;">${getLevelText(chapter.level)}</div>
+                    </div>
+                    <div class="chapter-actions">
+                        <button class="action-btn" onclick="event.stopPropagation(); editChapter(${chapter.id})">✏️</button>
+                        <button class="action-btn" onclick="event.stopPropagation(); deleteChapter(${chapter.id})">🗑️</button>
+                    </div>
+                `;
+                chapterElement.onclick = () => selectChapter(chapter.id);
+                container.appendChild(chapterElement);
+            });
+        }
+
+        function selectChapter(chapterId) {
+            currentChapterId = chapterId;
+            const chapter = chapters.find(c => c.id === chapterId);
+            
+            if (chapter) {
+                // Mettre à jour l'interface
+                document.getElementById('current-chapter-title').textContent = chapter.title;
+                document.getElementById('current-chapter-meta').innerHTML = `
+                    ${getSubjectText(chapter.subject)} • ${getLevelText(chapter.level)}
+                    ${chapter.description ? `<br><em>${chapter.description}</em>` : ''}
+                `;
+
+                // Afficher les containers
+                document.getElementById('editor-container').style.display = 'block';
+                document.getElementById('session-list').style.display = 'block';
+
+                // Charger les séances du chapitre
+                renderSessionsList(chapter.sessions);
+
+                // Mettre à jour la liste des chapitres
+                renderChaptersList();
+            }
+        }
+
+        function renderSessionsList(sessions) {
+            const container = document.getElementById('sessions-container');
+            container.innerHTML = '';
+
+            if (sessions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 20px;">Aucune séance pour ce chapitre. Créez-en une !</p>';
+                return;
+            }
+
+            sessions.forEach(session => {
+                const sessionElement = document.createElement('div');
+                sessionElement.className = `session-item ${currentSessionId === session.id ? 'active' : ''}`;
+                sessionElement.innerHTML = `
+                    <div class="session-date">${formatDate(session.date)} - ${session.duration}h</div>
+                    <div class="session-title">${session.title}</div>
+                    <div class="session-content-preview">${session.objectives || 'Aucun objectif défini'}</div>
+                `;
+                sessionElement.onclick = () => selectSession(session.id);
+                container.appendChild(sessionElement);
+            });
+        }
+
+        function selectSession(sessionId) {
+            currentSessionId = sessionId;
+            const chapter = chapters.find(c => c.id === currentChapterId);
+            const session = chapter.sessions.find(s => s.id === sessionId);
+            
+            if (session) {
+                // Mettre à jour l'éditeur
+                document.getElementById('lesson-editor').innerHTML = session.content || '<p>Contenu de la séance...</p>';
+                renderSessionsList(chapter.sessions);
+                updatePreview();
+            }
+        }
+
+        // Gestion des chapitres
+        function showNewChapterModal() {
+            document.getElementById('newChapterModal').style.display = 'block';
+        }
+
+        function createNewChapter() {
+            const title = document.getElementById('chapter-title').value;
+            const subject = document.getElementById('chapter-subject').value;
+            const level = document.getElementById('chapter-level').value;
+            const description = document.getElementById('chapter-description').value;
+            const color = document.getElementById('chapter-color').value;
+
+            if (!title) {
+                alert('Veuillez saisir un titre pour le chapitre');
+                return;
+            }
+
+            const newChapter = {
+                id: Date.now(),
+                title,
+                subject,
+                level,
+                description,
+                color,
+                sessions: [],
+                createdAt: new Date().toISOString()
+            };
+
+            chapters.push(newChapter);
+            saveChapters();
+            renderChaptersList();
+            selectChapter(newChapter.id);
+            hideModal('newChapterModal');
+            
+            // Réinitialiser le formulaire
+            document.getElementById('chapter-title').value = '';
+            document.getElementById('chapter-description').value = '';
+        }
+
+        function editChapter(chapterId) {
+            const chapter = chapters.find(c => c.id === chapterId);
+            if (chapter) {
+                document.getElementById('edit-chapter-title').value = chapter.title;
+                document.getElementById('edit-chapter-subject').value = chapter.subject;
+                document.getElementById('edit-chapter-level').value = chapter.level;
+                document.getElementById('edit-chapter-description').value = chapter.description || '';
+                document.getElementById('edit-chapter-color').value = chapter.color;
+                
+                currentChapterId = chapterId;
+                document.getElementById('editChapterModal').style.display = 'block';
+            }
+        }
+
+        function updateChapter() {
+            const chapter = chapters.find(c => c.id === currentChapterId);
+            if (chapter) {
+                chapter.title = document.getElementById('edit-chapter-title').value;
+                chapter.subject = document.getElementById('edit-chapter-subject').value;
+                chapter.level = document.getElementById('edit-chapter-level').value;
+                chapter.description = document.getElementById('edit-chapter-description').value;
+                chapter.color = document.getElementById('edit-chapter-color').value;
+
+                saveChapters();
+                renderChaptersList();
+                selectChapter(currentChapterId);
+                hideModal('editChapterModal');
+            }
+        }
+
+        function deleteChapter(chapterId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce chapitre ? Toutes les séances associées seront perdues.')) {
+                chapters = chapters.filter(c => c.id !== chapterId);
+                saveChapters();
+                renderChaptersList();
+                
+                if (currentChapterId === chapterId) {
+                    currentChapterId = chapters.length > 0 ? chapters[0].id : null;
+                    if (currentChapterId) {
+                        selectChapter(currentChapterId);
+                    } else {
+                        // Aucun chapitre restant
+                        document.getElementById('current-chapter-title').textContent = 'Sélectionnez un chapitre';
+                        document.getElementById('current-chapter-meta').textContent = 'Cliquez sur un chapitre dans la sidebar pour commencer';
+                        document.getElementById('editor-container').style.display = 'none';
+                        document.getElementById('session-list').style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        function deleteCurrentChapter() {
+            if (currentChapterId) {
+                deleteChapter(currentChapterId);
+                hideModal('editChapterModal');
+            }
+        }
+
+        function editCurrentChapter() {
+            if (currentChapterId) {
+                editChapter(currentChapterId);
+            }
+        }
+
+        // Gestion des séances
+        function createNewSession() {
+            if (!currentChapterId) {
+                alert('Veuillez d\'abord sélectionner un chapitre');
+                return;
+            }
+
+            const title = document.getElementById('session-title').value;
+            const date = document.getElementById('session-date').value;
+            const duration = document.getElementById('session-duration').value;
+            const objectives = document.getElementById('session-objectives').value;
+
+            if (!title || !date) {
+                alert('Veuillez remplir les champs obligatoires');
+                return;
+            }
+
+            const chapter = chapters.find(c => c.id === currentChapterId);
+            const newSession = {
+                id: Date.now(),
+                title,
+                date,
+                duration: parseFloat(duration),
+                objectives,
+                content: '<h3>Objectifs de la séance</h3><p>Rédigez le contenu de votre séance ici...</p>',
+                createdAt: new Date().toISOString()
+            };
+
+            chapter.sessions.push(newSession);
+            saveChapters();
+            renderSessionsList(chapter.sessions);
+            selectSession(newSession.id);
+            hideModal('newSessionModal');
+            
+            // Réinitialiser le formulaire
+            document.getElementById('session-title').value = '';
+            document.getElementById('session-objectives').value = '';
+        }
+
+        function saveCurrentSession() {
+            if (!currentChapterId || !currentSessionId) {
+                alert('Veuillez sélectionner une séance à sauvegarder');
+                return;
+            }
+
+            const chapter = chapters.find(c => c.id === currentChapterId);
+            const session = chapter.sessions.find(s => s.id === currentSessionId);
+            
+            if (session) {
+                session.content = document.getElementById('lesson-editor').innerHTML;
+                session.updatedAt = new Date().toISOString();
+                saveChapters();
+                alert('✅ Séance sauvegardée !');
+            }
+        }
+
+        // Utilitaires
+        function saveChapters() {
+            localStorage.setItem('chapters', JSON.stringify(chapters));
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        function getSubjectText(subject) {
+            const subjects = {
+                'maths': 'Mathématiques',
+                'physics': 'Physique-Chimie',
+                'french': 'Français',
+                'history': 'Histoire-Géographie'
+            };
+            return subjects[subject] || subject;
+        }
+
+        function getLevelText(level) {
+            const levels = {
+                '4eme': '4ème',
+                '3eme': '3ème', 
+                '2nde': 'Seconde',
+                '1ere': 'Première',
+                'terminale': 'Terminale'
+            };
+            return levels[level] || level;
+        }
+
+        function showChapterStats() {
+            const chapter = chapters.find(c => c.id === currentChapterId);
+            if (chapter) {
+                alert(`Statistiques du chapitre "${chapter.title}":\n\n` +
+                      `• ${chapter.sessions.length} séance(s)\n` +
+                      `• Créé le: ${formatDate(chapter.createdAt)}\n` +
+                      `• Dernière modification: ${chapter.sessions.length > 0 ? formatDate(chapter.sessions[chapter.sessions.length-1].updatedAt || chapter.sessions[chapter.sessions.length-1].createdAt) : 'Aucune'}`);
+            }
+        }
+
+        function generatePDF() {
+            if (!currentChapterId) {
+                alert('Veuillez sélectionner un chapitre');
+                return;
+            }
+            alert('Génération du PDF pour le chapitre courant...');
+            // Implémentation PDF à ajouter
+        }
+
+        function generateFullPDF() {
+            alert('Génération du PDF complet de tous les chapitres...');
+            // Implémentation PDF complète à ajouter
+        }
+
+        // Fonctions de l'éditeur (conservées de la version précédente)
         function formatText(command) {
             document.execCommand(command, false, null);
             updatePreview();
@@ -435,8 +1002,6 @@
         }
 
         function updatePreview() {
-            // Cette fonction mettrait à jour l'aperçu des formules mathématiques
-            // En utilisant KaTeX pour render le LaTeX
             const preview = document.getElementById('preview-content');
             const mathElements = document.querySelectorAll('.math-formula');
             
@@ -454,82 +1019,9 @@
             });
         }
 
-        // Gestion des modales
-        function showNewSessionModal() {
-            document.getElementById('newSessionModal').style.display = 'block';
-        }
-
-        function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function createNewSession() {
-            const title = document.getElementById('session-title').value;
-            const date = document.getElementById('session-date').value;
-            const duration = document.getElementById('session-duration').value;
-            
-            if (title && date) {
-                alert(`Nouvelle séance créée : ${title} - ${date} (${duration}h)`);
-                hideModal('newSessionModal');
-            } else {
-                alert('Veuillez remplir tous les champs obligatoires');
-            }
-        }
-
-        // Génération PDF (simulée)
-        function generatePDF() {
-            alert('Fonction PDF : En production, cette fonction générerait un PDF avec jsPDF ou en envoyant au serveur.');
-            // Ici, on pourrait utiliser window.print() en attendant
-            window.print();
-        }
-
         function showPrintPreview() {
-            alert('Ouverture de l\'aperçu avant impression...');
             window.print();
-        }
-
-        // Navigation entre chapitres
-        function showChapter(chapterId) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Mettre à jour le contenu en fonction du chapitre
-            const chapters = {
-                'chap1': 'Théorème de Pythagore',
-                'chap2': 'Calcul littéral', 
-                'chap3': 'Équations'
-            };
-            document.getElementById('current-chapter').textContent = chapters[chapterId];
-        }
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialiser la date du jour
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('session-date').value = today;
-            
-            // Initialiser l'aperçu mathématique
-            updatePreview();
-            
-            // Initialiser KaTeX pour le rendu automatique
-            renderMathInElement(document.body, {
-                delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '$', right: '$', display: false},
-                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true}
-                ]
-            });
-        });
-
-        function saveSession() {
-            const content = document.getElementById('lesson-editor').innerHTML;
-            // En production, on enverrait ce contenu au serveur
-            localStorage.setItem('lastSession', content);
-            alert('✅ Séance sauvegardée !');
         }
     </script>
 </body>
-                  </html>
+    </html>
