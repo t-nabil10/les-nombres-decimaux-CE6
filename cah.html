@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathBook Maker - Votre cahier de texte numérique</title>
+    <!-- KaTeX pour les formules mathématiques -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .logo h1 {
+            font-size: 1.5em;
+            color: #3498db;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section h3 {
+            color: #ecf0f1;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: #34495e;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #3498db;
+        }
+
+        .nav-item.active {
+            background: #2980b9;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .editor-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .editor-toolbar {
+            background: #ecf0f1;
+            padding: 15px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tool-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .editor {
+            padding: 20px;
+            min-height: 400px;
+            border: none;
+            outline: none;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .editor:focus {
+            outline: none;
+        }
+
+        .math-preview {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #bdc3c7;
+            min-height: 100px;
+        }
+
+        /* Session List */
+        .session-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .session-item {
+            padding: 15px;
+            border: 1px solid #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .session-item:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .session-item.active {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+
+        .session-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .session-title {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        /* Print Styles */
+        @media print {
+            .sidebar, .editor-toolbar, .btn {
+                display: none !important;
+            }
+            
+            .main-content {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .editor-container {
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>📚 MathBook Maker</h1>
+                <p>Votre cahier de texte intelligent</p>
+            </div>
+
+            <div class="nav-section">
+                <h3>📖 Mes Chapitres</h3>
+                <div class="nav-item active" onclick="showChapter('chap1')">Théorème de Pythagore</div>
+                <div class="nav-item" onclick="showChapter('chap2')">Calcul littéral</div>
+                <div class="nav-item" onclick="showChapter('chap3')">Équations</div>
+            </div>
+
+            <div class="nav-section">
+                <h3>📅 Planification</h3>
+                <div class="nav-item" onclick="showCalendar()">Vue Calendrier</div>
+                <div class="nav-item" onclick="showSessions()">Toutes les séances</div>
+            </div>
+
+            <div class="nav-section">
+                <h3>⚙️ Export</h3>
+                <button class="btn btn-success" onclick="generatePDF()">
+                    📄 Générer PDF
+                </button>
+                <button class="btn" onclick="showPrintPreview()">
+                    👁️ Aperçu Impression
+                </button>
+            </div>
+
+            <div class="nav-section">
+                <button class="btn" onclick="showNewSessionModal()">
+                    ➕ Nouvelle Séance
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2 id="current-chapter">Théorème de Pythagore</h2>
+                <p id="current-date">Séance du 15 mars 2024 - Durée: 2h</p>
+            </div>
+
+            <!-- Editor -->
+            <div class="editor-container">
+                <div class="editor-toolbar">
+                    <button class="tool-btn" onclick="formatText('bold')"><b>B</b></button>
+                    <button class="tool-btn" onclick="formatText('italic')"><i>I</i></button>
+                    <button class="tool-btn" onclick="formatText('underline')"><u>U</u></button>
+                    <button class="tool-btn" onclick="insertBullet()">• Liste</button>
+                    <button class="tool-btn" onclick="insertMath()">∑ Math</button>
+                    <button class="tool-btn" onclick="insertImage()">🖼️ Image</button>
+                    <button class="tool-btn" onclick="saveSession()">💾 Sauvegarder</button>
+                </div>
+
+                <div 
+                    class="editor" 
+                    id="lesson-editor"
+                    contenteditable="true"
+                    oninput="updatePreview()"
+                >
+                    <h3>Objectifs de la séance</h3>
+                    <ul>
+                        <li>Comprendre le théorème de Pythagore</li>
+                        <li>Savoir calculer l'hypoténuse d'un triangle rectangle</li>
+                        <li>Résoudre des problèmes concrets</li>
+                    </ul>
+
+                    <h3>Leçon</h3>
+                    <p>Dans un triangle rectangle, le carré de l'hypoténuse est égal à la somme des carrés des deux autres côtés.</p>
+                    <p>Si ABC est un triangle rectangle en A, alors :</p>
+                    <p class="math-formula">BC² = AB² + AC²</p>
+
+                    <h3>Exercices</h3>
+                    <p><strong>Exercice 1 :</strong> Calculer l'hypoténuse d'un triangle rectangle dont les côtés mesurent 3 cm et 4 cm.</p>
+                    <p><strong>Exercice 2 :</strong> Un triangle a des côtés de 5 cm, 12 cm et 13 cm. Est-il rectangle ?</p>
+
+                    <h3>Devoirs</h3>
+                    <p>Exercices 15, 16 et 17 page 124 - À rendre pour le 18 mars</p>
+                </div>
+
+                <div class="math-preview" id="math-preview">
+                    <h4>Aperçu des formules mathématiques :</h4>
+                    <div id="preview-content"></div>
+                </div>
+            </div>
+
+            <!-- Sessions List -->
+            <div class="session-list">
+                <h3>📋 Séances de ce chapitre</h3>
+                <div class="session-item active">
+                    <div class="session-date">15/03/2024 - 2h</div>
+                    <div class="session-title">Découverte du théorème</div>
+                    <div class="session-content-preview">Introduction au théorème de Pythagore avec exemples simples...</div>
+                </div>
+                <div class="session-item">
+                    <div class="session-date">18/03/2024 - 2h</div>
+                    <div class="session-title">Applications et problèmes</div>
+                    <div class="session-content-preview">Résolution de problèmes concrets utilisant le théorème...</div>
+                </div>
+                <div class="session-item">
+                    <div class="session-date">22/03/2024 - 1h</div>
+                    <div class="session-title">Évaluation</div>
+                    <div class="session-content-preview">Contrôle sur le théorème de Pythagore...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Session Modal -->
+    <div class="modal" id="newSessionModal">
+        <div class="modal-content">
+            <h3>➕ Nouvelle Séance</h3>
+            <div class="form-group">
+                <label>Titre de la séance</label>
+                <input type="text" id="session-title" placeholder="Ex: Découverte du théorème de Pythagore">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="session-date">
+            </div>
+            <div class="form-group">
+                <label>Durée (heures)</label>
+                <input type="number" id="session-duration" value="1" min="0.5" step="0.5">
+            </div>
+            <div class="form-group">
+                <label>Chapitre</label>
+                <select id="session-chapter">
+                    <option value="chap1">Théorème de Pythagore</option>
+                    <option value="chap2">Calcul littéral</option>
+                    <option value="chap3">Équations</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="createNewSession()">Créer la séance</button>
+            <button class="btn" onclick="hideModal('newSessionModal')">Annuler</button>
+        </div>
+    </div>
+
+    <script>
+        // Gestion de l'éditeur
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            updatePreview();
+        }
+
+        function insertBullet() {
+            document.execCommand('insertUnorderedList', false, null);
+        }
+
+        function insertMath() {
+            const formula = prompt('Entrez votre formule mathématique (LaTeX) :', 'x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}');
+            if (formula) {
+                const mathElement = document.createElement('div');
+                mathElement.className = 'math-formula';
+                mathElement.textContent = formula;
+                mathElement.setAttribute('data-latex', formula);
+                
+                document.getElementById('lesson-editor').appendChild(mathElement);
+                updatePreview();
+            }
+        }
+
+        function insertImage() {
+            const url = prompt('URL de l\'image :');
+            if (url) {
+                document.execCommand('insertImage', false, url);
+            }
+        }
+
+        function updatePreview() {
+            // Cette fonction mettrait à jour l'aperçu des formules mathématiques
+            // En utilisant KaTeX pour render le LaTeX
+            const preview = document.getElementById('preview-content');
+            const mathElements = document.querySelectorAll('.math-formula');
+            
+            preview.innerHTML = '';
+            mathElements.forEach(element => {
+                const latex = element.getAttribute('data-latex') || element.textContent;
+                const mathDiv = document.createElement('div');
+                try {
+                    katex.render(latex, mathDiv);
+                    preview.appendChild(mathDiv);
+                } catch (error) {
+                    mathDiv.textContent = 'Erreur dans la formule: ' + latex;
+                    preview.appendChild(mathDiv);
+                }
+            });
+        }
+
+        // Gestion des modales
+        function showNewSessionModal() {
+            document.getElementById('newSessionModal').style.display = 'block';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function createNewSession() {
+            const title = document.getElementById('session-title').value;
+            const date = document.getElementById('session-date').value;
+            const duration = document.getElementById('session-duration').value;
+            
+            if (title && date) {
+                alert(`Nouvelle séance créée : ${title} - ${date} (${duration}h)`);
+                hideModal('newSessionModal');
+            } else {
+                alert('Veuillez remplir tous les champs obligatoires');
+            }
+        }
+
+        // Génération PDF (simulée)
+        function generatePDF() {
+            alert('Fonction PDF : En production, cette fonction générerait un PDF avec jsPDF ou en envoyant au serveur.');
+            // Ici, on pourrait utiliser window.print() en attendant
+            window.print();
+        }
+
+        function showPrintPreview() {
+            alert('Ouverture de l\'aperçu avant impression...');
+            window.print();
+        }
+
+        // Navigation entre chapitres
+        function showChapter(chapterId) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Mettre à jour le contenu en fonction du chapitre
+            const chapters = {
+                'chap1': 'Théorème de Pythagore',
+                'chap2': 'Calcul littéral', 
+                'chap3': 'Équations'
+            };
+            document.getElementById('current-chapter').textContent = chapters[chapterId];
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser la date du jour
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('session-date').value = today;
+            
+            // Initialiser l'aperçu mathématique
+            updatePreview();
+            
+            // Initialiser KaTeX pour le rendu automatique
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ]
+            });
+        });
+
+        function saveSession() {
+            const content = document.getElementById('lesson-editor').innerHTML;
+            // En production, on enverrait ce contenu au serveur
+            localStorage.setItem('lastSession', content);
+            alert('✅ Séance sauvegardée !');
+        }
+    </script>
+</body>
+                  </html>
