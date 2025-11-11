@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application de Gestion des Bulletins</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        nav button {
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        nav button:hover {
+            background-color: var(--light-color);
+        }
+        
+        .section {
+            display: none;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--light-color);
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .bulletin {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .bulletin-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .bulletin-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .bulletin-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .bulletin-table th {
+            background-color: var(--light-color);
+        }
+        
+        .bulletin-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .appreciation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 4px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+        
+        .alert {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .import-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px dashed #ccc;
+        }
+        
+        .file-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .file-input-container input[type="file"] {
+            flex: 1;
+        }
+        
+        .template-download {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border-radius: 4px;
+        }
+        
+        .template-download h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .template-download ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .bulletin, .bulletin * {
+                visibility: visible;
+            }
+            .bulletin {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Application de Gestion des Bulletins Scolaires</h1>
+            <nav>
+                <button onclick="showSection('students')">Élèves</button>
+                <button onclick="showSection('subjects')">Matières</button>
+                <button onclick="showSection('grades')">Notes</button>
+                <button onclick="showSection('bulletin')">Bulletins</button>
+                <button onclick="showSection('import')">Import CSV/Excel</button>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Section Gestion des Élèves -->
+        <section id="students" class="section active">
+            <h2>Gestion des Élèves</h2>
+            <div id="studentAlert"></div>
+            <div class="form-group">
+                <label for="studentName">Nom complet</label>
+                <input type="text" id="studentName" placeholder="Nom et prénom de l'élève">
+            </div>
+            <div class="form-group">
+                <label for="studentClass">Classe</label>
+                <input type="text" id="studentClass" placeholder="Ex: 6ème A">
+            </div>
+            <button onclick="addStudent()">Ajouter l'élève</button>
+            
+            <h3 style="margin-top: 30px;">Liste des élèves</h3>
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Classe</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les élèves seront ajoutés ici dynamiquement -->
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Section Gestion des Matières -->
+        <section id="subjects" class="section">
+            <h2>Gestion des Matières</h2>
+            <div id="subjectAlert"></div>
+            <div class="form-group">
+                <label for="subjectName">Nom de la matière</label>
+                <input type="text" id="subjectName" placeholder="Ex: Mathématiques">
+            </div>
+            <div class="form-group">
+                <label for="subjectCoefficient">Coefficient</label>
+                <input type="number" id="subjectCoefficient" min="1" max="10" value="1">
+            </div>
+            <button onclick="addSubject()">Ajouter la matière</button>
+            
+            <h3 style="margin-top: 30px;">Liste des matières</h3>
+            <table id="subjectsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Matière</th>
+                        <th>Coefficient</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les matières seront ajoutées ici dynamiquement -->
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Section Saisie des Notes -->
+        <section id="grades" class="section">
+            <h2>Saisie des Notes</h2>
+            <div id="gradeAlert"></div>
+            <div class="form-group">
+                <label for="gradeStudent">Élève</label>
+                <select id="gradeStudent">
+                    <option value="">Sélectionner un élève</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="gradeSubject">Matière</label>
+                <select id="gradeSubject">
+                    <option value="">Sélectionner une matière</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="gradeValue">Note (sur 20)</label>
+                <input type="number" id="gradeValue" min="0" max="20" step="0.5" placeholder="Ex: 15.5">
+            </div>
+            <button onclick="addGrade()">Ajouter la note</button>
+            
+            <h3 style="margin-top: 30px;">Notes enregistrées</h3>
+            <table id="gradesTable">
+                <thead>
+                    <tr>
+                        <th>Élève</th>
+                        <th>Matière</th>
+                        <th>Note</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les notes seront ajoutées ici dynamiquement -->
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Section Génération des Bulletins -->
+        <section id="bulletin" class="section">
+            <h2>Génération des Bulletins</h2>
+            <div class="form-group">
+                <label for="bulletinStudent">Sélectionner un élève</label>
+                <select id="bulletinStudent" onchange="generateBulletin()">
+                    <option value="">Sélectionner un élève</option>
+                </select>
+            </div>
+            
+            <div id="bulletinContainer">
+                <!-- Le bulletin sera généré ici -->
+                <div class="no-data" id="noBulletin">
+                    Sélectionnez un élève pour générer son bulletin
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section Import CSV/Excel -->
+        <section id="import" class="section">
+            <h2>Importation de données</h2>
+            <div id="importAlert"></div>
+            
+            <div class="import-section">
+                <h3>Importer des élèves</h3>
+                <div class="file-input-container">
+                    <input type="file" id="importStudentsFile" accept=".csv,.xlsx,.xls">
+                    <button onclick="importStudents()" class="btn-success">Importer</button>
+                </div>
+                <p>Format attendu: Colonnes "Nom" et "Classe"</p>
+            </div>
+            
+            <div class="import-section">
+                <h3>Importer des matières</h3>
+                <div class="file-input-container">
+                    <input type="file" id="importSubjectsFile" accept=".csv,.xlsx,.xls">
+                    <button onclick="importSubjects()" class="btn-success">Importer</button>
+                </div>
+                <p>Format attendu: Colonnes "Matière" et "Coefficient"</p>
+            </div>
+            
+            <div class="import-section">
+                <h3>Importer des notes</h3>
+                <div class="file-input-container">
+                    <input type="file" id="importGradesFile" accept=".csv,.xlsx,.xls">
+                    <button onclick="importGrades()" class="btn-success">Importer</button>
+                </div>
+                <p>Format attendu: Colonnes "Élève", "Matière" et "Note"</p>
+            </div>
+            
+            <div class="template-download">
+                <h4>Télécharger des modèles</h4>
+                <p>Utilisez ces modèles pour préparer vos données avant importation :</p>
+                <ul>
+                    <li><a href="#" onclick="downloadTemplate('students')">Modèle pour les élèves</a></li>
+                    <li><a href="#" onclick="downloadTemplate('subjects')">Modèle pour les matières</a></li>
+                    <li><a href="#" onclick="downloadTemplate('grades')">Modèle pour les notes</a></li>
+                </ul>
+            </div>
+            
+            <div class="import-section">
+                <h3>Exportation des données</h3>
+                <button onclick="exportData()" class="btn-warning">Exporter toutes les données</button>
+                <p>Exporte l'ensemble des données (élèves, matières, notes) dans un fichier Excel</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Données de l'application
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+        let grades = JSON.parse(localStorage.getItem('grades')) || [];
+        
+        // Initialisation de l'application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStudentsTable();
+            updateSubjectsTable();
+            updateGradesTable();
+            populateStudentSelects();
+        });
+        
+        // Navigation entre les sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        // Gestion des élèves
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const studentClass = document.getElementById('studentClass').value.trim();
+            
+            if (!name || !studentClass) {
+                showAlert('studentAlert', 'Veuillez remplir tous les champs', 'danger');
+                return;
+            }
+            
+            const newStudent = {
+                id: Date.now(),
+                name: name,
+                class: studentClass
+            };
+            
+            students.push(newStudent);
+            saveToLocalStorage('students', students);
+            updateStudentsTable();
+            populateStudentSelects();
+            
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentClass').value = '';
+            
+            showAlert('studentAlert', 'Élève ajouté avec succès', 'success');
+        }
+        
+        function deleteStudent(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet élève ?')) {
+                // Supprimer aussi les notes associées à cet élève
+                grades = grades.filter(grade => grade.studentId !== id);
+                saveToLocalStorage('grades', grades);
+                
+                students = students.filter(student => student.id !== id);
+                saveToLocalStorage('students', students);
+                
+                updateStudentsTable();
+                updateGradesTable();
+                populateStudentSelects();
+                
+                showAlert('studentAlert', 'Élève supprimé avec succès', 'success');
+            }
+        }
+        
+        function updateStudentsTable() {
+            const tbody = document.querySelector('#studentsTable tbody');
+            tbody.innerHTML = '';
+            
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">Aucun élève enregistré</td></tr>';
+                return;
+            }
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.class}</td>
+                    <td class="actions">
+                        <button class="btn-danger" onclick="deleteStudent(${student.id})">Supprimer</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Gestion des matières
+        function addSubject() {
+            const name = document.getElementById('subjectName').value.trim();
+            const coefficient = parseInt(document.getElementById('subjectCoefficient').value);
+            
+            if (!name || !coefficient) {
+                showAlert('subjectAlert', 'Veuillez remplir tous les champs', 'danger');
+                return;
+            }
+            
+            const newSubject = {
+                id: Date.now(),
+                name: name,
+                coefficient: coefficient
+            };
+            
+            subjects.push(newSubject);
+            saveToLocalStorage('subjects', subjects);
+            updateSubjectsTable();
+            
+            document.getElementById('subjectName').value = '';
+            document.getElementById('subjectCoefficient').value = '1';
+            
+            showAlert('subjectAlert', 'Matière ajoutée avec succès', 'success');
+        }
+        
+        function deleteSubject(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette matière ?')) {
+                // Supprimer aussi les notes associées à cette matière
+                grades = grades.filter(grade => grade.subjectId !== id);
+                saveToLocalStorage('grades', grades);
+                
+                subjects = subjects.filter(subject => subject.id !== id);
+                saveToLocalStorage('subjects', subjects);
+                
+                updateSubjectsTable();
+                updateGradesTable();
+                
+                showAlert('subjectAlert', 'Matière supprimée avec succès', 'success');
+            }
+        }
+        
+        function updateSubjectsTable() {
+            const tbody = document.querySelector('#subjectsTable tbody');
+            tbody.innerHTML = '';
+            
+            if (subjects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">Aucune matière enregistrée</td></tr>';
+                return;
+            }
+            
+            subjects.forEach(subject => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${subject.id}</td>
+                    <td>${subject.name}</td>
+                    <td>${subject.coefficient}</td>
+                    <td class="actions">
+                        <button class="btn-danger" onclick="deleteSubject(${subject.id})">Supprimer</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Gestion des notes
+        function addGrade() {
+            const studentId = parseInt(document.getElementById('gradeStudent').value);
+            const subjectId = parseInt(document.getElementById('gradeSubject').value);
+            const value = parseFloat(document.getElementById('gradeValue').value);
+            
+            if (!studentId || !subjectId || isNaN(value)) {
+                showAlert('gradeAlert', 'Veuillez remplir tous les champs', 'danger');
+                return;
+            }
+            
+            if (value < 0 || value > 20) {
+                showAlert('gradeAlert', 'La note doit être comprise entre 0 et 20', 'danger');
+                return;
+            }
+            
+            const newGrade = {
+                id: Date.now(),
+                studentId: studentId,
+                subjectId: subjectId,
+                value: value
+            };
+            
+            grades.push(newGrade);
+            saveToLocalStorage('grades', grades);
+            updateGradesTable();
+            
+            document.getElementById('gradeValue').value = '';
+            
+            showAlert('gradeAlert', 'Note ajoutée avec succès', 'success');
+        }
+        
+        function deleteGrade(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette note ?')) {
+                grades = grades.filter(grade => grade.id !== id);
+                saveToLocalStorage('grades', grades);
+                
+                updateGradesTable();
+                
+                showAlert('gradeAlert', 'Note supprimée avec succès', 'success');
+            }
+        }
+        
+        function updateGradesTable() {
+            const tbody = document.querySelector('#gradesTable tbody');
+            tbody.innerHTML = '';
+            
+            if (grades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">Aucune note enregistrée</td></tr>';
+                return;
+            }
+            
+            grades.forEach(grade => {
+                const student = students.find(s => s.id === grade.studentId);
+                const subject = subjects.find(s => s.id === grade.subjectId);
+                
+                if (student && subject) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name}</td>
+                        <td>${subject.name}</td>
+                        <td>${grade.value}/20</td>
+                        <td class="actions">
+                            <button class="btn-danger" onclick="deleteGrade(${grade.id})">Supprimer</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+        
+        // Remplir les sélecteurs d'élèves
+        function populateStudentSelects() {
+            const gradeStudentSelect = document.getElementById('gradeStudent');
+            const bulletinStudentSelect = document.getElementById('bulletinStudent');
+            
+            // Vider les options existantes (sauf la première)
+            while (gradeStudentSelect.children.length > 1) {
+                gradeStudentSelect.removeChild(gradeStudentSelect.lastChild);
+            }
+            
+            while (bulletinStudentSelect.children.length > 1) {
+                bulletinStudentSelect.removeChild(bulletinStudentSelect.lastChild);
+            }
+            
+            // Ajouter les élèves
+            students.forEach(student => {
+                const option1 = document.createElement('option');
+                option1.value = student.id;
+                option1.textContent = `${student.name} (${student.class})`;
+                gradeStudentSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = student.id;
+                option2.textContent = `${student.name} (${student.class})`;
+                bulletinStudentSelect.appendChild(option2);
+            });
+            
+            // Remplir le sélecteur de matières pour les notes
+            const gradeSubjectSelect = document.getElementById('gradeSubject');
+            while (gradeSubjectSelect.children.length > 1) {
+                gradeSubjectSelect.removeChild(gradeSubjectSelect.lastChild);
+            }
+            
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                gradeSubjectSelect.appendChild(option);
+            });
+        }
+        
+        // Génération du bulletin
+        function generateBulletin() {
+            const studentId = parseInt(document.getElementById('bulletinStudent').value);
+            const container = document.getElementById('bulletinContainer');
+            
+            if (!studentId) {
+                container.innerHTML = '<div class="no-data" id="noBulletin">Sélectionnez un élève pour générer son bulletin</div>';
+                return;
+            }
+            
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            // Récupérer les notes de l'élève
+            const studentGrades = grades.filter(grade => grade.studentId === studentId);
+            
+            if (studentGrades.length === 0) {
+                container.innerHTML = '<div class="no-data">Aucune note enregistrée pour cet élève</div>';
+                return;
+            }
+            
+            // Calculer les moyennes par matière et la moyenne générale
+            let totalWeightedSum = 0;
+            let totalCoefficient = 0;
+            const subjectAverages = [];
+            
+            subjects.forEach(subject => {
+                const subjectGrades = studentGrades.filter(grade => grade.subjectId === subject.id);
+                if (subjectGrades.length > 0) {
+                    const sum = subjectGrades.reduce((acc, grade) => acc + grade.value, 0);
+                    const average = sum / subjectGrades.length;
+                    const weightedAverage = average * subject.coefficient;
+                    
+                    subjectAverages.push({
+                        name: subject.name,
+                        coefficient: subject.coefficient,
+                        average: average,
+                        weightedAverage: weightedAverage
+                    });
+                    
+                    totalWeightedSum += weightedAverage;
+                    totalCoefficient += subject.coefficient;
+                }
+            });
+            
+            const overallAverage = totalCoefficient > 0 ? totalWeightedSum / totalCoefficient : 0;
+            
+            // Générer le bulletin
+            let bulletinHTML = `
+                <div class="bulletin">
+                    <div class="bulletin-header">
+                        <h2>BULLETIN SCOLAIRE</h2>
+                        <h3>${student.class}</h3>
+                    </div>
+                    
+                    <div class="bulletin-info">
+                        <div>
+                            <p><strong>Élève:</strong> ${student.name}</p>
+                        </div>
+                        <div>
+                            <p><strong>Année scolaire:</strong> ${new Date().getFullYear()}-${new Date().getFullYear()+1}</p>
+                        </div>
+                    </div>
+                    
+                    <table class="bulletin-table">
+                        <thead>
+                            <tr>
+                                <th>Matière</th>
+                                <th>Coefficient</th>
+                                <th>Moyenne</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            subjectAverages.forEach(subject => {
+                bulletinHTML += `
+                    <tr>
+                        <td>${subject.name}</td>
+                        <td>${subject.coefficient}</td>
+                        <td>${subject.average.toFixed(2)}/20</td>
+                    </tr>
+                `;
+            });
+            
+            bulletinHTML += `
+                        </tbody>
+                    </table>
+                    
+                    <div class="bulletin-footer">
+                        <div>
+                            <p><strong>Moyenne générale:</strong> ${overallAverage.toFixed(2)}/20</p>
+                        </div>
+                        <div>
+                            <p><strong>Appréciation:</strong> ${getAppreciation(overallAverage)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="appreciation">
+                        <p><strong>Commentaires:</strong></p>
+                        <p>${getComments(overallAverage, subjectAverages)}</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="no-print" onclick="window.print()">Imprimer le bulletin</button>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = bulletinHTML;
+        }
+        
+        function getAppreciation(average) {
+            if (average >= 16) return "Excellent";
+            if (average >= 14) return "Très bien";
+            if (average >= 12) return "Bien";
+            if (average >= 10) return "Assez bien";
+            if (average >= 8) return "Insuffisant";
+            return "Très insuffisant";
+        }
+        
+        function getComments(average, subjectAverages) {
+            if (average >= 16) return "Félicitations pour ces excellents résultats. Continuez vos efforts !";
+            if (average >= 14) return "Très bon travail. Vous pouvez encore progresser dans certaines matières.";
+            if (average >= 12) return "Résultats satisfaisants. Des progrès sont possibles avec un peu plus de travail.";
+            if (average >= 10) return "Résultats justes. Il faut redoubler d'efforts pour améliorer votre moyenne.";
+            if (average >= 8) return "Résultats insuffisants. Un travail régulier est nécessaire pour progresser.";
+            return "Résultats très insuffisants. Une remise en question et un travail soutenu sont indispensables.";
+        }
+        
+        // Importation des données
+        function importStudents() {
+            const fileInput = document.getElementById('importStudentsFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('importAlert', 'Veuillez sélectionner un fichier', 'danger');
+                return;
+            }
+            
+            readFile(file, function(data) {
+                try {
+                    const importedStudents = parseCSVorExcel(data, ['Nom', 'Classe']);
+                    let addedCount = 0;
+                    
+                    importedStudents.forEach(studentData => {
+                        const name = studentData.Nom;
+                        const studentClass = studentData.Classe;
+                        
+                        if (name && studentClass) {
+                            // Vérifier si l'élève existe déjà
+                            const exists = students.some(s => 
+                                s.name === name && s.class === studentClass
+                            );
+                            
+                            if (!exists) {
+                                const newStudent = {
+                                    id: Date.now() + Math.random(),
+                                    name: name,
+                                    class: studentClass
+                                };
+                                
+                                students.push(newStudent);
+                                addedCount++;
+                            }
+                        }
+                    });
+                    
+                    saveToLocalStorage('students', students);
+                    updateStudentsTable();
+                    populateStudentSelects();
+                    
+                    showAlert('importAlert', `${addedCount} élèves importés avec succès`, 'success');
+                    fileInput.value = '';
+                } catch (error) {
+                    showAlert('importAlert', 'Erreur lors de l\'importation: ' + error.message, 'danger');
+                }
+            });
+        }
+        
+        function importSubjects() {
+            const fileInput = document.getElementById('importSubjectsFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('importAlert', 'Veuillez sélectionner un fichier', 'danger');
+                return;
+            }
+            
+            readFile(file, function(data) {
+                try {
+                    const importedSubjects = parseCSVorExcel(data, ['Matière', 'Coefficient']);
+                    let addedCount = 0;
+                    
+                    importedSubjects.forEach(subjectData => {
+                        const name = subjectData.Matière;
+                        const coefficient = parseInt(subjectData.Coefficient);
+                        
+                        if (name && coefficient) {
+                            // Vérifier si la matière existe déjà
+                            const exists = subjects.some(s => s.name === name);
+                            
+                            if (!exists) {
+                                const newSubject = {
+                                    id: Date.now() + Math.random(),
+                                    name: name,
+                                    coefficient: coefficient
+                                };
+                                
+                                subjects.push(newSubject);
+                                addedCount++;
+                            }
+                        }
+                    });
+                    
+                    saveToLocalStorage('subjects', subjects);
+                    updateSubjectsTable();
+                    
+                    showAlert('importAlert', `${addedCount} matières importées avec succès`, 'success');
+                    fileInput.value = '';
+                } catch (error) {
+                    showAlert('importAlert', 'Erreur lors de l\'importation: ' + error.message, 'danger');
+                }
+            });
+        }
+        
+        function importGrades() {
+            const fileInput = document.getElementById('importGradesFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('importAlert', 'Veuillez sélectionner un fichier', 'danger');
+                return;
+            }
+            
+            readFile(file, function(data) {
+                try {
+                    const importedGrades = parseCSVorExcel(data, ['Élève', 'Matière', 'Note']);
+                    let addedCount = 0;
+                    
+                    importedGrades.forEach(gradeData => {
+                        const studentName = gradeData.Élève;
+                        const subjectName = gradeData.Matière;
+                        const value = parseFloat(gradeData.Note);
+                        
+                        if (studentName && subjectName && !isNaN(value)) {
+                            // Trouver l'élève et la matière
+                            const student = students.find(s => s.name === studentName);
+                            const subject = subjects.find(s => s.name === subjectName);
+                            
+                            if (student && subject) {
+                                // Vérifier si la note existe déjà
+                                const exists = grades.some(g => 
+                                    g.studentId === student.id && 
+                                    g.subjectId === subject.id && 
+                                    g.value === value
+                                );
+                                
+                                if (!exists) {
+                                    const newGrade = {
+                                        id: Date.now() + Math.random(),
+                                        studentId: student.id,
+                                        subjectId: subject.id,
+                                        value: value
+                                    };
+                                    
+                                    grades.push(newGrade);
+                                    addedCount++;
+                                }
+                            }
+                        }
+                    });
+                    
+                    saveToLocalStorage('grades', grades);
+                    updateGradesTable();
+                    
+                    showAlert('importAlert', `${addedCount} notes importées avec succès`, 'success');
+                    fileInput.value = '';
+                } catch (error) {
+                    showAlert('importAlert', 'Erreur lors de l\'importation: ' + error.message, 'danger');
+                }
+            });
+        }
+        
+        // Lecture de fichier CSV ou Excel
+        function readFile(file, callback) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const data = e.target.result;
+                callback(data);
+            };
+            
+            reader.onerror = function() {
+                throw new Error('Erreur lors de la lecture du fichier');
+            };
+            
+            if (file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+        
+        // Parsing des données CSV ou Excel
+        function parseCSVorExcel(data, expectedColumns) {
+            let rows = [];
+            
+            // Vérifier si c'est un fichier Excel
+            if (data instanceof ArrayBuffer) {
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                rows = XLSX.utils.sheet_to_json(worksheet);
+            } else {
+                // C'est un fichier CSV
+                const lines = data.split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                
+                // Vérifier que les colonnes attendues sont présentes
+                const missingColumns = expectedColumns.filter(col => !headers.includes(col));
+                if (missingColumns.length > 0) {
+                    throw new Error(`Colonnes manquantes: ${missingColumns.join(', ')}`);
+                }
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    const values = line.split(',').map(v => v.trim());
+                    const row = {};
+                    
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    
+                    rows.push(row);
+                }
+            }
+            
+            return rows;
+        }
+        
+        // Téléchargement de modèles
+        function downloadTemplate(type) {
+            let data, filename, headers;
+            
+            switch(type) {
+                case 'students':
+                    data = [
+                        { Nom: 'Dupont Jean', Classe: '6ème
