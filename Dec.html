@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Nombres Décimaux : Opérations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 25px;
+        }
+        h3 {
+            color: #3498db;
+        }
+        .definition {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .exemple {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #7f8c8d;
+            margin: 15px 0;
+        }
+        .remarque {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-left: 4px solid #f39c12;
+            margin: 15px 0;
+        }
+        .regle {
+            background-color: #e8f6f3;
+            padding: 15px;
+            border-left: 4px solid #16a085;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .math {
+            font-family: "Times New Roman", serif;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Les Nombres Décimaux : Opérations</h1>
+
+        <section id="un-nombre-decimal">
+            <h2>1. Un nombre décimal</h2>
+            
+            <div class="definition">
+                <h3>a) Définitions :</h3>
+                <ul>
+                    <li>Une <strong>Fraction décimale</strong> est une fraction dont le dénominateur est 10, 100, 1 000, etc.</li>
+                    <li>Un <strong>nombre décimal</strong> est un nombre qui peut s'écrire sous forme d'une fraction décimale. On peut aussi utiliser une virgule pour donner son écriture décimale.</li>
+                    <li>Quand on coupe une unité en 10 parties égales, on obtient des <strong>dixièmes</strong> (1/10).</li>
+                    <li>Quand on coupe une unité en 100 parties égales, on obtient des <strong>centièmes</strong> (1/100).</li>
+                    <li>Quand on coupe une unité en 1 000 parties égales, on obtient des <strong>millièmes</strong> (1/1000).</li>
+                </ul>
+            </div>
+            
+            <div class="exemple">
+                <h3>b) Exemple :</h3>
+                <p>Fractions décimales :</p>
+                <table>
+                    <tr>
+                        <td>3/10</td>
+                        <td>et</td>
+                        <td>8/10</td>
+                        <td>53/100</td>
+                    </tr>
+                    <tr>
+                        <td>2/100</td>
+                        <td>et</td>
+                        <td>5/100</td>
+                        <td>22/1000</td>
+                    </tr>
+                </table>
+                <p><strong>Décomposer le nombre 78,426</strong></p>
+            </div>
+            
+            <div class="remarque">
+                <h3>c) Remarques :</h3>
+                <p>Un nombre entier est un nombre décimal particulier.<br>
+                En effet, 25 peut s'écrire avec une virgule (25,0).</p>
+            </div>
+        </section>
+
+        <section id="ecritures-nombre-decimal">
+            <h2>2. Écritures d'un nombre décimal</h2>
+            
+            <div class="definition">
+                <h3>a) Définition :</h3>
+                <p>Un nombre décimal est égal à la somme de sa partie entière et de sa partie décimale sachant que :</p>
+                <ul>
+                    <li>La partie entière est un nombre entier.</li>
+                    <li>La partie décimale est un nombre inférieur à 1.</li>
+                </ul>
+            </div>
+            
+            <div class="exemple">
+                <h3>b) Exemple :</h3>
+                <p>8,53 = 8 (partie entière) + 0,53 (partie décimale)</p>
+            </div>
+            
+            <div class="remarque">
+                <h3>c) Remarques :</h3>
+                <p>Un nombre décimal s'écrit à l'aide d'un nombre fini de chiffres après la virgule.</p>
+            </div>
+        </section>
+
+        <section id="comparaison-rangement">
+            <h2>3. Comparaison et rangement</h2>
+            
+            <div class="definition">
+                <h3>a) Définition :</h3>
+                <p>Comparer deux nombres, c'est trouver lequel est le plus grand (ou le plus petit) ou dire s'ils sont égaux.</p>
+            </div>
+            
+            <div class="remarque">
+                <h3>b) Remarques :</h3>
+                <p>On utilise les symboles > pour «plus grand que» et < pour «plus petit que».</p>
+            </div>
+            
+            <div class="regle">
+                <h3>c) Règle :</h3>
+                <p>Pour comparer deux nombres décimaux écrits sous forme décimale :</p>
+                <ol>
+                    <li>On compare les parties entières ;</li>
+                    <li>Si les parties entières sont égales alors on compare les chiffres des dixièmes ;</li>
+                    <li>Si les chiffres des dixièmes sont égaux alors on compare les chiffres des centièmes ;</li>
+                    <li>Et ainsi de suite jusqu'à ce que les deux nombres aient des chiffres différents.</li>
+                </ol>
+            </div>
+            
+            <div class="exemple">
+                <h3>d) Exemple :</h3>
+                <p>Compare les nombres 81,357 et 81,36.</p>
+                <p>Range les nombres 25,342; 253,42; 25,243; 235,42; 25,324 dans l'ordre croissant.</p>
+            </div>
+        </section>
+
+        <section id="addition-soustraction">
+            <h2>4. Addition et soustraction de nombres décimaux</h2>
+            
+            <div class="regle">
+                <h3>a) Règle :</h3>
+                <p>Pour poser et effectuer une addition ou une soustraction de nombres décimaux, on place les nombres les uns en dessous des autres, de sorte que les virgules soient alignées verticalement.</p>
+            </div>
+            
+            <div class="exemple">
+                <h3>b) Exemple :</h3>
+                <p>Pose et calcule : 15,2 + 0,57 + 28</p>
+            </div>
+            
+            <div class="regle">
+                <h3>c) Règle :</h3>
+                <p>Pour poser la soustraction 12 - 6,7, on place les nombres correctement et on ajoute un zéro pour que les deux nombres aient le même nombre de chiffres dans leurs parties décimales (en effet, 12 = 12,0).</p>
+            </div>
+            
+            <div class="exemple">
+                <h3>d) Exemple :</h3>
+                <p>Pose et calcule : 12 - 6,7</p>
+            </div>
+            
+            <div class="exemple">
+                <h3>e) Application :</h3>
+                <p>Pose et calcule :</p>
+                <ul>
+                    <li>a) 23,6 + 765,23</li>
+                    <li>b) 1266 + 41,97</li>
+                    <li>c) 1298,866 - 654,78</li>
+                    <li>d) 1652 - 675,65</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
