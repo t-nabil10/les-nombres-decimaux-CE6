@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'Attestations de Salaire et Travail</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-download {
+            background-color: var(--success-color);
+            margin-left: 10px;
+        }
+        
+        .btn-download:hover {
+            background-color: #219653;
+        }
+        
+        .attestation {
+            border: 1px solid #ddd;
+            padding: 30px;
+            min-height: 400px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .attestation-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .attestation-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .attestation-content {
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .attestation-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        
+        .signature {
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 200px;
+            margin: 10px auto;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .attestation-footer {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Générateur d'Attestations de Salaire et de Travail</h1>
+            <p class="description">Créez facilement des attestations professionnelles personnalisées pour vos employés</p>
+        </header>
+        
+        <div class="app-container">
+            <section class="form-section">
+                <h2>Informations de l'employé</h2>
+                <form id="attestation-form">
+                    <div class="form-group">
+                        <label for="nom">Nom et prénom de l'employé</label>
+                        <input type="text" id="nom" name="nom" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profession">Profession / Poste</label>
+                        <input type="text" id="profession" name="profession" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="salaire">Salaire mensuel brut (€)</label>
+                        <input type="number" id="salaire" name="salaire" min="0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date-embauche">Date d'embauche</label>
+                        <input type="date" id="date-embauche" name="date-embauche" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date-attestation">Date de l'attestation</label>
+                        <input type="date" id="date-attestation" name="date-attestation" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type-attestation">Type d'attestation</label>
+                        <select id="type-attestation" name="type-attestation">
+                            <option value="salaire">Attestation de salaire</option>
+                            <option value="travail">Attestation de travail</option>
+                            <option value="mixte">Attestation mixte (salaire et travail)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="entreprise">Nom de l'entreprise</label>
+                        <input type="text" id="entreprise" name="entreprise" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adresse-entreprise">Adresse de l'entreprise</label>
+                        <textarea id="adresse-entreprise" name="adresse-entreprise" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="signature-num" name="signature-num">
+                            <label for="signature-num">Inclure une signature numérique</label>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="generer-btn" class="btn">Générer l'attestation</button>
+                </form>
+            </section>
+            
+            <section class="preview-section">
+                <h2>Aperçu de l'attestation</h2>
+                <div class="attestation" id="attestation-preview">
+                    <div class="attestation-header">
+                        <div class="attestation-title" id="preview-title">Attestation de Salaire</div>
+                        <div id="preview-date">Date: </div>
+                    </div>
+                    
+                    <div class="attestation-content" id="preview-content">
+                        <p>L'entreprise <span id="preview-entreprise">[Nom de l'entreprise]</span>, située à <span id="preview-adresse">[Adresse de l'entreprise]</span>,</p>
+                        <p>atteste que Monsieur/Madame <span id="preview-nom">[Nom et prénom]</span>,</p>
+                        <p>occupe le poste de <span id="preview-profession">[Profession]</span> au sein de notre société depuis le <span id="preview-embauche">[Date d'embauche]</span>.</p>
+                        <p>Son salaire mensuel brut s'élève à <span id="preview-salaire">[Salaire]</span> €.</p>
+                        <p>La présente attestation est délivrée pour servir et valoir ce que de droit.</p>
+                    </div>
+                    
+                    <div class="attestation-footer">
+                        <div>
+                            <p>Fait à <span id="preview-lieu">[Ville]</span>, le <span id="preview-date-finale">[Date]</span></p>
+                        </div>
+                        <div class="signature">
+                            <p>Le responsable</p>
+                            <div class="signature-line"></div>
+                            <p id="preview-signature">Signature</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button id="telecharger-btn" class="btn btn-download" disabled>Télécharger en PDF</button>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>Application de génération d'attestations de salaire et de travail | © 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Définir les dates par défaut
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('date-attestation').value = formattedDate;
+            
+            // Calculer une date d'embauche par défaut (il y a 1 an)
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(today.getFullYear() - 1);
+            const formattedOneYearAgo = oneYearAgo.toISOString().split('T')[0];
+            document.getElementById('date-embauche').value = formattedOneYearAgo;
+            
+            // Éléments du DOM
+            const form = document.getElementById('attestation-form');
+            const genererBtn = document.getElementById('generer-btn');
+            const telechargerBtn = document.getElementById('telecharger-btn');
+            const typeAttestation = document.getElementById('type-attestation');
+            
+            // Fonction de génération de l'attestation
+            genererBtn.addEventListener('click', function() {
+                // Récupérer les valeurs du formulaire
+                const nom = document.getElementById('nom').value;
+                const profession = document.getElementById('profession').value;
+                const salaire = document.getElementById('salaire').value;
+                const dateEmbauche = document.getElementById('date-embauche').value;
+                const dateAttestation = document.getElementById('date-attestation').value;
+                const entreprise = document.getElementById('entreprise').value;
+                const adresseEntreprise = document.getElementById('adresse-entreprise').value;
+                const type = typeAttestation.value;
+                
+                // Formater les dates
+                const dateEmbaucheFormatted = formatDate(dateEmbauche);
+                const dateAttestationFormatted = formatDate(dateAttestation);
+                
+                // Mettre à jour l'aperçu
+                document.getElementById('preview-nom').textContent = nom;
+                document.getElementById('preview-profession').textContent = profession;
+                document.getElementById('preview-salaire').textContent = parseFloat(salaire).toLocaleString('fr-FR');
+                document.getElementById('preview-embauche').textContent = dateEmbaucheFormatted;
+                document.getElementById('preview-entreprise').textContent = entreprise;
+                document.getElementById('preview-adresse').textContent = adresseEntreprise;
+                document.getElementById('preview-date').textContent = `Date: ${dateAttestationFormatted}`;
+                document.getElementById('preview-date-finale').textContent = dateAttestationFormatted;
+                
+                // Mettre à jour le titre selon le type d'attestation
+                let titre = '';
+                if (type === 'salaire') {
+                    titre = 'Attestation de Salaire';
+                } else if (type === 'travail') {
+                    titre = 'Attestation de Travail';
+                } else {
+                    titre = 'Attestation de Salaire et de Travail';
+                }
+                document.getElementById('preview-title').textContent = titre;
+                
+                // Mettre à jour le contenu selon le type d'attestation
+                let contenu = '';
+                if (type === 'salaire') {
+                    contenu = `
+                        <p>L'entreprise <span>${entreprise}</span>, située à <span>${adresseEntreprise}</span>,</p>
+                        <p>atteste que Monsieur/Madame <span>${nom}</span>,</p>
+                        <p>perçoit un salaire mensuel brut de <span>${parseFloat(salaire).toLocaleString('fr-FR')}</span> €.</p>
+                        <p>La présente attestation est délivrée pour servir et valoir ce que de droit.</p>
+                    `;
+                } else if (type === 'travail') {
+                    contenu = `
+                        <p>L'entreprise <span>${entreprise}</span>, située à <span>${adresseEntreprise}</span>,</p>
+                        <p>atteste que Monsieur/Madame <span>${nom}</span>,</p>
+                        <p>occupe le poste de <span>${profession}</span> au sein de notre société depuis le <span>${dateEmbaucheFormatted}</span>.</p>
+                        <p>La présente attestation est délivrée pour servir et valoir ce que de droit.</p>
+                    `;
+                } else {
+                    contenu = `
+                        <p>L'entreprise <span>${entreprise}</span>, située à <span>${adresseEntreprise}</span>,</p>
+                        <p>atteste que Monsieur/Madame <span>${nom}</span>,</p>
+                        <p>occupe le poste de <span>${profession}</span> au sein de notre société depuis le <span>${dateEmbaucheFormatted}</span>.</p>
+                        <p>Son salaire mensuel brut s'élève à <span>${parseFloat(salaire).toLocaleString('fr-FR')}</span> €.</p>
+                        <p>La présente attestation est délivrée pour servir et valoir ce que de droit.</p>
+                    `;
+                }
+                
+                document.getElementById('preview-content').innerHTML = contenu;
+                
+                // Activer le bouton de téléchargement
+                telechargerBtn.disabled = false;
+            });
+            
+            // Fonction de formatage de date
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                return date.toLocaleDateString('fr-FR', options);
+            }
+            
+            // Fonction de téléchargement (simulée)
+            telechargerBtn.addEventListener('click', function() {
+                alert('Fonctionnalité de téléchargement PDF à implémenter. Dans une application réelle, cette fonction générerait un PDF téléchargeable.');
+                // Ici, vous pourriez utiliser une bibliothèque comme jsPDF pour générer un PDF
+                // window.jsPDF = window.jspdf.jsPDF;
+                // const doc = new jsPDF();
+                // doc.html(document.getElementById('attestation-preview'), {
+                //     callback: function(doc) {
+                //         doc.save('attestation.pdf');
+                //     },
+                //     x: 10,
+                //     y: 10
+                // });
+            });
+        });
+    </script>
+</body>
+</html>
